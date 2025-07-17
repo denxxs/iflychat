@@ -122,8 +122,8 @@ const ChatApp = () => {
 
     // Update the title for the first message
     if (activeChat.messages.length === 0 && message.type === 'user') {
-      updatedChat.title = message.content.length > 30 
-        ? message.content.substring(0, 30) + '...' 
+      updatedChat.title = message.content.length > 40 
+        ? message.content.substring(0, 40) + '...' 
         : message.content;
     }
 
@@ -144,7 +144,7 @@ const ChatApp = () => {
   }
 
   return (
-    <div className="h-screen flex" style={{ backgroundColor: '#F9F9F9' }}>
+    <div className="h-screen flex antialiased">
       <Sidebar
         chats={chats}
         activeChat={activeChat}
