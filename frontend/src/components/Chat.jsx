@@ -137,22 +137,14 @@ const Chat = ({
                 <Button
                   key={index}
                   variant="outline"
-                  className="text-left justify-start h-auto p-3 bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-md transition-all duration-200 border-gray-200 text-sm"
+                  className="text-left justify-start h-auto p-3 bg-white/80 backdrop-blur-sm hover:shadow-md transition-all duration-200 border-gray-200 text-sm hover:bg-orange-500 hover:text-white hover:border-orange-500"
                   style={{
                     borderColor: '#02295c',
-                    color: '#02295c'
+                    color: '#02295c',
+                    '--hover-bg': '#fa6620',
+                    '--hover-border': '#fa6620'
                   }}
                   onClick={() => setMessage(prompt)}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#fa6620';
-                    e.target.style.color = 'white';
-                    e.target.style.borderColor = '#fa6620';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'white';
-                    e.target.style.color = '#02295c';
-                    e.target.style.borderColor = '#02295c';
-                  }}
                 >
                   <span>{prompt}</span>
                 </Button>
