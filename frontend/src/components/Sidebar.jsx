@@ -150,85 +150,64 @@ const Sidebar = ({
           
           <ScrollArea className="flex-1 px-2">
             <div className="space-y-1">
-              {chats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className="group relative transition-all duration-200"
-                >
-                  <Button
-                    onClick={() => onChatSelect(chat)}
-                    variant="ghost"
-                    className={`w-full justify-start text-left p-3 h-auto rounded-lg transition-all duration-200 ${
-                      activeChat?.id === chat.id 
-                        ? 'text-white' 
-                        : 'text-white/80 hover:text-white'
-                    }`}
-                    style={{
-                      backgroundColor: activeChat?.id === chat.id 
-                        ? '#ff6a22' 
-                        : 'transparent'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (activeChat?.id !== chat.id) {
-                        e.target.style.backgroundColor = '#ff6a22';
-                        // Ensure all child elements get white text on hover
-                        const title = e.target.querySelector('.chat-title');
-                        const date = e.target.querySelector('.chat-date');
-                        if (title) title.style.color = 'white';
-                        if (date) date.style.color = 'rgba(255, 255, 255, 0.8)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeChat?.id !== chat.id) {
-                        e.target.style.backgroundColor = 'transparent';
-                        // Reset text colors when not hovering
-                        const title = e.target.querySelector('.chat-title');
-                        const date = e.target.querySelector('.chat-date');
-                        if (title) title.style.color = 'rgba(255, 255, 255, 0.8)';
-                        if (date) date.style.color = 'rgba(255, 255, 255, 0.6)';
-                      }
-                    }}
+              {chats.map((chat) => {
+                const isActive = activeChat?.id === chat.id;
+                
+                return (
+                  <div
+                    key={chat.id}
+                    className="group relative transition-all duration-200"
                   >
-                    <div className="flex items-center space-x-3 w-full">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        activeChat?.id === chat.id 
-                          ? 'bg-white/20 text-white' 
-                          : 'bg-white/10 text-white/70'
-                      }`}>
-                        <MessageSquare className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-medium truncate text-sm chat-title ${
-                          activeChat?.id === chat.id 
-                            ? 'text-white' 
-                            : 'text-white/80'
+                    <Button
+                      onClick={() => onChatSelect(chat)}
+                      variant="ghost"
+                      className={`w-full justify-start text-left p-3 h-auto rounded-lg transition-all duration-200 ${
+                        isActive 
+                          ? 'bg-orange-500 text-white hover:bg-orange-500' 
+                          : 'text-white/80 hover:text-white hover:bg-orange-500'
+                      }`}
+                      style={{
+                        backgroundColor: isActive ? '#ff6a22' : 'transparent'
+                      }}
+                    >
+                      <div className="flex items-center space-x-3 w-full">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                          isActive 
+                            ? 'bg-white/20 text-white' 
+                            : 'bg-white/10 text-white/70 group-hover:bg-white/20 group-hover:text-white'
                         }`}>
-                          {formatChatTitle(chat)}
-                        </p>
-                        <p className={`text-xs mt-0.5 chat-date ${
-                          activeChat?.id === chat.id 
-                            ? 'text-white/80' 
-                            : 'text-white/60'
-                        }`}>
-                          {formatDate(chat.timestamp)}
-                        </p>
+                          <MessageSquare className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-medium truncate text-sm transition-all duration-200 ${
+                            isActive 
+                              ? 'text-white' 
+                              : 'text-white/80 group-hover:text-white'
+                          }`}>
+                            {formatChatTitle(chat)}
+                          </p>
+                          <p className={`text-xs mt-0.5 transition-all duration-200 ${
+                            isActive 
+                              ? 'text-white/80' 
+                              : 'text-white/60 group-hover:text-white/80'
+                          }`}>
+                            {formatDate(chat.timestamp)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </Button>
-                  
-                  {/* Delete button - shows on hover */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white p-1 transition-all duration-200"
-                    style={{ '--hover-bg': '#ff6a22' }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
+                    </Button>
+                    
+                    {/* Delete button - shows on hover */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white hover:bg-orange-500 p-1 transition-all duration-200"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
           </ScrollArea>
         </div>
