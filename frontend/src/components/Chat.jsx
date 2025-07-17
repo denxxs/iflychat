@@ -117,7 +117,9 @@ const Chat = ({
       <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#f8f9fa' }}>
         <div className="text-center max-w-md px-6">
           <div className="relative mb-8">
-            <IndiflyLogo size="3xl" className="mx-auto drop-shadow-2xl" />
+            <div className="p-4 bg-white rounded-2xl shadow-lg">
+              <IndiflyLogo size="3xl" className="mx-auto drop-shadow-2xl" />
+            </div>
             <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff6a22' }}>
               <Sparkles className="w-3 h-3 text-white" />
             </div>
