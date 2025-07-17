@@ -21,7 +21,7 @@ const MessageBubble = ({ message, isUser }) => {
         {/* Avatar */}
         <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${isUser ? 'ml-3' : 'mr-3'}`}
              style={{ 
-               backgroundColor: isUser ? '#ff6a22' : '#1b2f5a'
+               backgroundColor: isUser ? '#fa6620' : '#02295c'
              }}>
           {isUser ? (
             <User className="w-5 h-5 text-white" />
@@ -38,7 +38,7 @@ const MessageBubble = ({ message, isUser }) => {
               : 'bg-white text-gray-800 border border-gray-200'
           }`}
           style={{
-            backgroundColor: isUser ? '#ff6a22' : 'white'
+            backgroundColor: isUser ? '#fa6620' : 'white'
           }}>
             
             {/* File attachment indicator */}
@@ -55,7 +55,7 @@ const MessageBubble = ({ message, isUser }) => {
                   isUser ? 'bg-white/20' : ''
                 }`}
                 style={{
-                  backgroundColor: isUser ? 'rgba(255, 255, 255, 0.2)' : '#1b2f5a'
+                  backgroundColor: isUser ? 'rgba(255, 255, 255, 0.2)' : '#02295c'
                 }}>
                   <FileText className={`w-4 h-4 ${isUser ? 'text-white' : 'text-white'}`} />
                 </div>
@@ -100,8 +100,8 @@ const MessageBubble = ({ message, isUser }) => {
                 variant="ghost"
                 size="sm"
                 className="text-gray-400 hover:text-white p-1 h-auto"
-                style={{ '--hover-bg': '#ff6a22' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+                style={{ '--hover-bg': '#fa6620' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 <ThumbsUp className="w-3 h-3" />

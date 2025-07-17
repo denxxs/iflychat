@@ -118,12 +118,12 @@ const Chat = ({
         <div className="text-center max-w-md px-6">
           <div className="relative mb-8">
             <IndiflyLogo size="3xl" className="mx-auto drop-shadow-2xl rounded-2xl" />
-            <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff6a22' }}>
+            <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center shadow-lg" style={{ backgroundColor: '#fa6620' }}>
               <Sparkles className="w-3 h-3 text-white" />
             </div>
           </div>
           
-          <h2 className="text-3xl font-bold mb-4" style={{ color: '#1b2f5a' }}>
+          <h2 className="text-3xl font-bold mb-4" style={{ color: '#02295c' }}>
             Indifly AI
           </h2>
           <p className="text-gray-600 text-lg mb-8 leading-relaxed">
@@ -131,7 +131,7 @@ const Chat = ({
           </p>
           
           <div className="space-y-3">
-            <p className="text-sm font-medium mb-4" style={{ color: '#1b2f5a' }}>Try asking about:</p>
+            <p className="text-sm font-medium mb-4" style={{ color: '#02295c' }}>Try asking about:</p>
             <div className="grid grid-cols-1 gap-2">
               {suggestedPrompts.map((prompt, index) => (
                 <Button
@@ -139,19 +139,19 @@ const Chat = ({
                   variant="outline"
                   className="text-left justify-start h-auto p-3 bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-md transition-all duration-200 border-gray-200 text-sm"
                   style={{
-                    borderColor: '#1b2f5a',
-                    color: '#1b2f5a'
+                    borderColor: '#02295c',
+                    color: '#02295c'
                   }}
                   onClick={() => setMessage(prompt)}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#ff6a22';
+                    e.target.style.backgroundColor = '#fa6620';
                     e.target.style.color = 'white';
-                    e.target.style.borderColor = '#ff6a22';
+                    e.target.style.borderColor = '#fa6620';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = 'white';
-                    e.target.style.color = '#1b2f5a';
-                    e.target.style.borderColor = '#1b2f5a';
+                    e.target.style.color = '#02295c';
+                    e.target.style.borderColor = '#02295c';
                   }}
                 >
                   <span>{prompt}</span>
@@ -164,9 +164,9 @@ const Chat = ({
             <Button
               onClick={onToggleSidebar}
               className="mt-6 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
-              style={{ backgroundColor: '#1b2f5a' }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
+              style={{ backgroundColor: '#02295c' }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#02295c'}
             >
               <Menu className="w-4 h-4 mr-2" />
               Open Chat History
@@ -180,7 +180,7 @@ const Chat = ({
   return (
     <div className="flex-1 flex flex-col" style={{ backgroundColor: '#f8f9fa' }}>
       {/* Header */}
-      <div className="border-b border-gray-200/50 p-4 shadow-sm" style={{ backgroundColor: '#1b2f5a' }}>
+      <div className="border-b border-gray-200/50 p-4 shadow-sm" style={{ backgroundColor: '#02295c' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {isMobile && !sidebarOpen && (
@@ -256,9 +256,9 @@ const Chat = ({
               variant="ghost"
               size="sm"
               className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 mb-2"
-              style={{ '--hover-bg': '#ff6a22' }}
+              style={{ '--hover-bg': '#fa6620' }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#ff6a22';
+                e.target.style.backgroundColor = '#fa6620';
                 e.target.style.color = 'white';
               }}
               onMouseLeave={(e) => {
@@ -278,11 +278,11 @@ const Chat = ({
                   placeholder="Ask me anything about legal matters..."
                   className="pr-12 h-12 bg-white/90 backdrop-blur-sm transition-all duration-200"
                   style={{
-                    borderColor: '#1b2f5a',
-                    '--tw-ring-color': '#ff6a22'
+                    borderColor: '#02295c',
+                    '--tw-ring-color': '#fa6620'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#ff6a22'}
-                  onBlur={(e) => e.target.style.borderColor = '#1b2f5a'}
+                  onFocus={(e) => e.target.style.borderColor = '#fa6620'}
+                  onBlur={(e) => e.target.style.borderColor = '#02295c'}
                   disabled={isLoading}
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -291,11 +291,11 @@ const Chat = ({
                     disabled={!message.trim() || isLoading}
                     className="h-8 w-8 p-0 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.05]"
                     style={{ 
-                      backgroundColor: '#1b2f5a',
-                      borderColor: '#1b2f5a'
+                      backgroundColor: '#02295c',
+                      borderColor: '#02295c'
                     }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#02295c'}
                   >
                     <Send className="w-4 h-4" />
                   </Button>
@@ -306,7 +306,7 @@ const Chat = ({
           
           <div className="mt-3 text-center">
             <p className="text-xs text-gray-500">
-              <span className="font-medium" style={{ color: '#1b2f5a' }}>Indifly AI</span> is powered by Indifly Ventures. Responses should be verified with qualified legal professionals.
+              <span className="font-medium" style={{ color: '#02295c' }}>Indifly AI</span> is powered by Indifly Ventures. Responses should be verified with qualified legal professionals.
             </p>
           </div>
         </div>

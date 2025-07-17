@@ -58,17 +58,17 @@ const FileUpload = ({ onFileUpload }) => {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         style={{
-          borderColor: isDragging ? '#ff6a22' : '#d1d5db',
+          borderColor: isDragging ? '#fa6620' : '#d1d5db',
           backgroundColor: isDragging ? '#fff7ed' : '#f8f9fa'
         }}
       >
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1b2f5a' }}>
+          <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#02295c' }}>
             <Upload className="w-6 h-6 text-white" />
           </div>
           
           <div>
-            <p className="text-sm font-medium mb-1" style={{ color: '#1b2f5a' }}>
+            <p className="text-sm font-medium mb-1" style={{ color: '#02295c' }}>
               Drop your legal document here
             </p>
             <p className="text-xs text-gray-500">
@@ -81,18 +81,18 @@ const FileUpload = ({ onFileUpload }) => {
             variant="outline"
             className="transition-all duration-200"
             style={{
-              borderColor: '#1b2f5a',
-              color: '#1b2f5a'
+              borderColor: '#02295c',
+              color: '#02295c'
             }}
             onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#ff6a22';
+              e.target.style.backgroundColor = '#fa6620';
               e.target.style.color = 'white';
-              e.target.style.borderColor = '#ff6a22';
+              e.target.style.borderColor = '#fa6620';
             }}
             onMouseLeave={(e) => {
               e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#1b2f5a';
-              e.target.style.borderColor = '#1b2f5a';
+              e.target.style.color = '#02295c';
+              e.target.style.borderColor = '#02295c';
             }}
           >
             <FileText className="w-4 h-4 mr-2" />
