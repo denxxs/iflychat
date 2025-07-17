@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
-import { Plus, MessageSquare, Menu, X, LogOut, Settings, User, Trash2 } from 'lucide-react';
+import { Plus, MessageSquare, Menu, X, LogOut, User, Trash2 } from 'lucide-react';
 import IndiflyLogo from './IndiflyLogo';
 
 const Sidebar = ({ 
@@ -35,9 +35,9 @@ const Sidebar = ({
       <Button
         onClick={onToggle}
         className="fixed top-4 left-4 z-50 md:hidden text-white shadow-lg border-0"
-        style={{ backgroundColor: '#1b2f5a' }}
-        onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
-        onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
+        style={{ backgroundColor: '#02295c' }}
+        onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
+        onMouseLeave={(e) => e.target.style.backgroundColor = '#02295c'}
       >
         <Menu className="w-5 h-5" />
       </Button>
@@ -61,7 +61,7 @@ const Sidebar = ({
             : 'relative'
         } w-80 flex flex-col shadow-xl`}
         style={{ 
-          backgroundColor: '#1b2f5a',
+          backgroundColor: '#02295c',
           transform: isMobile ? (isOpen ? 'translateX(0)' : 'translateX(-100%)') : 'none'
         }}
       >
@@ -108,8 +108,8 @@ const Sidebar = ({
                 variant="ghost"
                 size="sm"
                 className="text-white/70 hover:text-white p-2"
-                style={{ '--hover-bg': '#ff6a22' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+                style={{ '--hover-bg': '#fa6620' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 <LogOut className="w-4 h-4" />
@@ -124,11 +124,11 @@ const Sidebar = ({
             onClick={onNewChat}
             className="w-full justify-start h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
             style={{ 
-              backgroundColor: '#ff6a22',
-              borderColor: '#ff6a22'
+              backgroundColor: '#fa6620',
+              borderColor: '#fa6620'
             }}
             onMouseEnter={(e) => e.target.style.backgroundColor = '#e55a1a'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#ff6a22'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#fa6620'}
           >
             <Plus className="w-5 h-5 mr-3" />
             New AI Consultation
@@ -156,11 +156,21 @@ const Sidebar = ({
                       variant="ghost"
                       className={`w-full justify-start text-left p-3 h-auto rounded-lg transition-all duration-200 ${
                         isActive 
-                          ? 'bg-orange-500 text-white hover:bg-orange-500' 
-                          : 'text-white/80 hover:text-white hover:bg-orange-500'
+                          ? 'text-white' 
+                          : 'text-white/80 hover:text-white'
                       }`}
                       style={{
-                        backgroundColor: isActive ? '#ff6a22' : 'transparent'
+                        backgroundColor: isActive ? '#fa6620' : 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.target.style.backgroundColor = '#fa6620';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.target.style.backgroundColor = 'transparent';
+                        }
                       }}
                     >
                       <div className="flex items-center space-x-3 w-full">
@@ -194,7 +204,9 @@ const Sidebar = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white hover:bg-orange-500 p-1 transition-all duration-200"
+                      className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white p-1 transition-all duration-200"
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>
@@ -211,7 +223,7 @@ const Sidebar = ({
             <p className="text-white/70 text-xs">
               Powered by <span className="font-semibold text-white">Indifly Ventures</span>
             </p>
-            <div className="w-16 h-0.5 mx-auto mt-2" style={{ backgroundColor: '#ff6a22' }}></div>
+            <div className="w-16 h-0.5 mx-auto mt-2" style={{ backgroundColor: '#fa6620' }}></div>
           </div>
         </div>
       </div>

@@ -39,15 +39,15 @@ const Login = ({ onLogin }) => {
               <IndiflyLogo size="2xl" className="drop-shadow-lg" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: '#1b2f5a' }}>Indifly AI</h1>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: '#02295c' }}>Indifly AI</h1>
           <p className="text-gray-600 text-sm font-medium">Intelligent Legal Assistant</p>
-          <div className="w-12 h-0.5 mx-auto mt-4" style={{ backgroundColor: '#ff6a22' }}></div>
+          <div className="w-12 h-0.5 mx-auto mt-4" style={{ backgroundColor: '#fa6620' }}></div>
         </CardHeader>
         
         <CardContent className="px-8 pb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium" style={{ color: '#1b2f5a' }}>Email Address</Label>
+              <Label htmlFor="email" className="text-sm font-medium" style={{ color: '#02295c' }}>Email Address</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -59,17 +59,17 @@ const Login = ({ onLogin }) => {
                   required
                   className="pl-10 h-11 border-gray-200 transition-all duration-200"
                   style={{ 
-                    borderColor: '#1b2f5a',
-                    '--tw-ring-color': '#ff6a22'
+                    borderColor: '#02295c',
+                    '--tw-ring-color': '#fa6620'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#ff6a22'}
-                  onBlur={(e) => e.target.style.borderColor = '#1b2f5a'}
+                  onFocus={(e) => e.target.style.borderColor = '#fa6620'}
+                  onBlur={(e) => e.target.style.borderColor = '#02295c'}
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium" style={{ color: '#1b2f5a' }}>Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium" style={{ color: '#02295c' }}>Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -81,11 +81,11 @@ const Login = ({ onLogin }) => {
                   required
                   className="pl-10 pr-10 h-11 border-gray-200 transition-all duration-200"
                   style={{ 
-                    borderColor: '#1b2f5a',
-                    '--tw-ring-color': '#ff6a22'
+                    borderColor: '#02295c',
+                    '--tw-ring-color': '#fa6620'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#ff6a22'}
-                  onBlur={(e) => e.target.style.borderColor = '#1b2f5a'}
+                  onFocus={(e) => e.target.style.borderColor = '#fa6620'}
+                  onBlur={(e) => e.target.style.borderColor = '#02295c'}
                 />
                 <button
                   type="button"
@@ -102,11 +102,11 @@ const Login = ({ onLogin }) => {
               className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
               disabled={isLoading}
               style={{ 
-                backgroundColor: '#1b2f5a',
-                borderColor: '#1b2f5a'
+                backgroundColor: '#02295c',
+                borderColor: '#02295c'
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#02295c'}
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
@@ -121,7 +121,7 @@ const Login = ({ onLogin }) => {
           
           <div className="mt-6 text-center">
             <div className="rounded-lg p-3" style={{ backgroundColor: '#f8f9fa' }}>
-              <p className="text-xs font-medium" style={{ color: '#1b2f5a' }}>
+              <p className="text-xs font-medium" style={{ color: '#02295c' }}>
                 💡 Demo Mode: Use any email and password to continue
               </p>
             </div>
