@@ -104,13 +104,6 @@ const Sidebar = ({
             
             <div className="flex items-center space-x-1">
               <Button
-                variant="ghost"
-                size="sm"
-                className="text-white/70 hover:text-white hover:bg-white/10 p-2"
-              >
-                <Settings className="w-4 h-4" />
-              </Button>
-              <Button
                 onClick={onLogout}
                 variant="ghost"
                 size="sm"
