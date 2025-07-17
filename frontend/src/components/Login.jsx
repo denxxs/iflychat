@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import IndiflyLogo from './IndiflyLogo';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -35,23 +36,11 @@ const Login = ({ onLogin }) => {
         <CardHeader className="text-center pb-8 pt-12">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              {/* Indifly Ventures Logo */}
-              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#1b2f5a' }}>
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                  <div className="relative">
-                    {/* "i" letter */}
-                    <div className="w-3 h-3 rounded-full mb-1" style={{ backgroundColor: '#1b2f5a' }}></div>
-                    <div className="w-1 h-6 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
-                    {/* Orange accent bars */}
-                    <div className="absolute -right-2 top-0 w-4 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                    <div className="absolute -right-2 top-3 w-4 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                  </div>
-                </div>
-              </div>
+              <IndiflyLogo size="2xl" className="drop-shadow-lg" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: '#1b2f5a' }}>Indifly Ventures</h1>
-          <p className="text-gray-600 text-sm font-medium">Legal Assistant</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: '#1b2f5a' }}>Indifly AI</h1>
+          <p className="text-gray-600 text-sm font-medium">Intelligent Legal Assistant</p>
           <div className="w-12 h-0.5 mx-auto mt-4" style={{ backgroundColor: '#ff6a22' }}></div>
         </CardHeader>
         

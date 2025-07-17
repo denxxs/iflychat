@@ -6,6 +6,7 @@ import { Send, Menu, Paperclip, MoreVertical, Sparkles } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import Loader from './Loader';
 import FileUpload from './FileUpload';
+import IndiflyLogo from './IndiflyLogo';
 import { generateMockResponse, generateMessageId } from '../mock';
 
 const Chat = ({ 
@@ -116,29 +117,17 @@ const Chat = ({
       <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#f8f9fa' }}>
         <div className="text-center max-w-md px-6">
           <div className="relative mb-8">
-            {/* Indifly Ventures Logo */}
-            <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto shadow-2xl" style={{ backgroundColor: '#1b2f5a' }}>
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
-                <div className="relative">
-                  {/* "i" letter */}
-                  <div className="w-4 h-4 rounded-full mb-2" style={{ backgroundColor: '#1b2f5a' }}></div>
-                  <div className="w-2 h-8 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
-                  {/* Orange accent bars */}
-                  <div className="absolute -right-2 top-0 w-5 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                  <div className="absolute -right-2 top-4 w-5 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                </div>
-              </div>
-            </div>
+            <IndiflyLogo size="3xl" className="mx-auto drop-shadow-2xl" />
             <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff6a22' }}>
               <Sparkles className="w-3 h-3 text-white" />
             </div>
           </div>
           
           <h2 className="text-3xl font-bold mb-4" style={{ color: '#1b2f5a' }}>
-            Indifly Ventures Legal Assistant
+            Indifly AI
           </h2>
           <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-            Get expert legal guidance powered by AI. Start a conversation to receive professional insights on contracts, compliance, and legal matters.
+            Intelligent legal guidance powered by Indifly Ventures. Start a conversation to receive professional insights on contracts, compliance, and legal matters.
           </p>
           
           <div className="space-y-3">
@@ -204,25 +193,13 @@ const Chat = ({
                 <Menu className="w-5 h-5" />
               </Button>
             )}
-            <div className="relative">
-              {/* Indifly Ventures Logo */}
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
-                <div className="relative">
-                  {/* "i" letter */}
-                  <div className="w-2 h-2 rounded-full mb-1" style={{ backgroundColor: '#1b2f5a' }}></div>
-                  <div className="w-1 h-5 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
-                  {/* Orange accent bars */}
-                  <div className="absolute -right-1 top-0 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                  <div className="absolute -right-1 top-2 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                </div>
-              </div>
-            </div>
+            <IndiflyLogo size="md" className="drop-shadow-md" />
             <div>
               <h1 className="text-white font-bold text-lg">
                 {activeChat.title}
               </h1>
               <p className="text-white/70 text-sm">
-                Legal Assistant • Online
+                Indifly AI • Online
               </p>
             </div>
           </div>
@@ -329,7 +306,7 @@ const Chat = ({
           
           <div className="mt-3 text-center">
             <p className="text-xs text-gray-500">
-              <span className="font-medium" style={{ color: '#1b2f5a' }}>Legal Assistant</span> can provide guidance but responses should be verified with qualified legal professionals.
+              <span className="font-medium" style={{ color: '#1b2f5a' }}>Indifly AI</span> is powered by Indifly Ventures. Responses should be verified with qualified legal professionals.
             </p>
           </div>
         </div>

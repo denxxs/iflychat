@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, FileText, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from './ui/button';
+import IndiflyLogo from './IndiflyLogo';
 
 const MessageBubble = ({ message, isUser }) => {
   const formatTime = (timestamp) => {
@@ -25,16 +26,7 @@ const MessageBubble = ({ message, isUser }) => {
           {isUser ? (
             <User className="w-5 h-5 text-white" />
           ) : (
-            <div className="w-6 h-6 bg-white rounded-lg flex items-center justify-center">
-              <div className="relative">
-                {/* "i" letter */}
-                <div className="w-1.5 h-1.5 rounded-full mb-0.5" style={{ backgroundColor: '#1b2f5a' }}></div>
-                <div className="w-0.5 h-3 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
-                {/* Orange accent bars */}
-                <div className="absolute -right-1 top-0 w-2 h-1 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                <div className="absolute -right-1 top-1 w-2 h-1 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-              </div>
-            </div>
+            <IndiflyLogo size="sm" />
           )}
         </div>
 

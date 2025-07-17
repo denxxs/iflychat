@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { Plus, MessageSquare, Menu, X, LogOut, Settings, User, Trash2 } from 'lucide-react';
+import IndiflyLogo from './IndiflyLogo';
 
 const Sidebar = ({ 
   chats, 
@@ -68,22 +69,10 @@ const Sidebar = ({
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="relative">
-                {/* Indifly Ventures Logo */}
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md">
-                  <div className="relative">
-                    {/* "i" letter */}
-                    <div className="w-2 h-2 rounded-full mb-1" style={{ backgroundColor: '#1b2f5a' }}></div>
-                    <div className="w-1 h-5 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
-                    {/* Orange accent bars */}
-                    <div className="absolute -right-1 top-0 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                    <div className="absolute -right-1 top-2 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
-                  </div>
-                </div>
-              </div>
+              <IndiflyLogo size="md" className="drop-shadow-md" />
               <div>
-                <h2 className="text-white font-bold text-lg">Legal Assistant</h2>
-                <p className="text-white/70 text-xs font-medium">Indifly Ventures</p>
+                <h2 className="text-white font-bold text-lg">Indifly AI</h2>
+                <p className="text-white/70 text-xs font-medium">Intelligent Legal Assistant</p>
               </div>
             </div>
             
@@ -149,7 +138,7 @@ const Sidebar = ({
             onMouseLeave={(e) => e.target.style.backgroundColor = '#ff6a22'}
           >
             <Plus className="w-5 h-5 mr-3" />
-            New Legal Consultation
+            New AI Consultation
           </Button>
         </div>
 
@@ -164,29 +153,39 @@ const Sidebar = ({
               {chats.map((chat) => (
                 <div
                   key={chat.id}
-                  className={`group relative rounded-lg transition-all duration-200 ${
-                    activeChat?.id === chat.id 
-                      ? 'bg-white/20 border border-white/30' 
-                      : 'hover:bg-white/10'
-                  }`}
+                  className="group relative transition-all duration-200"
                 >
                   <Button
                     onClick={() => onChatSelect(chat)}
                     variant="ghost"
-                    className={`w-full justify-start text-left p-3 h-auto ${
-                      activeChat?.id === chat.id ? 'text-white' : 'text-white/80 hover:text-white'
+                    className={`w-full justify-start text-left p-3 h-auto rounded-lg transition-all duration-200 ${
+                      activeChat?.id === chat.id 
+                        ? 'text-white' 
+                        : 'text-white/80 hover:text-white'
                     }`}
                     style={{
-                      backgroundColor: activeChat?.id === chat.id ? '#ff6a22' : 'transparent'
+                      backgroundColor: activeChat?.id === chat.id 
+                        ? '#ff6a22' 
+                        : 'transparent'
                     }}
                     onMouseEnter={(e) => {
                       if (activeChat?.id !== chat.id) {
                         e.target.style.backgroundColor = '#ff6a22';
+                        // Ensure all child elements get white text on hover
+                        const title = e.target.querySelector('.chat-title');
+                        const date = e.target.querySelector('.chat-date');
+                        if (title) title.style.color = 'white';
+                        if (date) date.style.color = 'rgba(255, 255, 255, 0.8)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (activeChat?.id !== chat.id) {
                         e.target.style.backgroundColor = 'transparent';
+                        // Reset text colors when not hovering
+                        const title = e.target.querySelector('.chat-title');
+                        const date = e.target.querySelector('.chat-date');
+                        if (title) title.style.color = 'rgba(255, 255, 255, 0.8)';
+                        if (date) date.style.color = 'rgba(255, 255, 255, 0.6)';
                       }
                     }}
                   >
@@ -199,11 +198,17 @@ const Sidebar = ({
                         <MessageSquare className="w-4 h-4" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate text-sm">
+                        <p className={`font-medium truncate text-sm chat-title ${
+                          activeChat?.id === chat.id 
+                            ? 'text-white' 
+                            : 'text-white/80'
+                        }`}>
                           {formatChatTitle(chat)}
                         </p>
-                        <p className={`text-xs mt-0.5 ${
-                          activeChat?.id === chat.id ? 'text-white/80' : 'text-white/60'
+                        <p className={`text-xs mt-0.5 chat-date ${
+                          activeChat?.id === chat.id 
+                            ? 'text-white/80' 
+                            : 'text-white/60'
                         }`}>
                           {formatDate(chat.timestamp)}
                         </p>
