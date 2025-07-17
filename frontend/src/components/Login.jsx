@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
         <CardHeader className="text-center pb-8 pt-12">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <IndiflyLogo size="2xl" className="drop-shadow-lg" />
+              <IndiflyLogo size="2xl" className="drop-shadow-lg rounded-2xl" />
             </div>
           </div>
           <h1 className="text-3xl font-bold mb-2" style={{ color: '#02295c' }}>Indifly AI</h1>
