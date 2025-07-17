@@ -28,34 +28,37 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#f8f9fa' }}>
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/80 backdrop-blur-md">
+      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/90 backdrop-blur-md">
         <CardHeader className="text-center pb-8 pt-12">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg">
+              {/* Indifly Ventures Logo */}
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#1b2f5a' }}>
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">i</span>
+                  <div className="relative">
+                    {/* "i" letter */}
+                    <div className="w-3 h-3 rounded-full mb-1" style={{ backgroundColor: '#1b2f5a' }}></div>
+                    <div className="w-1 h-6 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
+                    {/* Orange accent bars */}
+                    <div className="absolute -right-2 top-0 w-4 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
+                    <div className="absolute -right-2 top-3 w-4 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full border-2 border-white flex items-center justify-center">
-                <span className="text-white font-bold text-xs">V</span>
-              </div>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Indifly Ventures</h1>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: '#1b2f5a' }}>Indifly Ventures</h1>
           <p className="text-gray-600 text-sm font-medium">Legal Assistant</p>
-          <div className="w-12 h-0.5 bg-gradient-to-r from-blue-600 to-orange-500 mx-auto mt-4"></div>
+          <div className="w-12 h-0.5 mx-auto mt-4" style={{ backgroundColor: '#ff6a22' }}></div>
         </CardHeader>
         
         <CardContent className="px-8 pb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
+              <Label htmlFor="email" className="text-sm font-medium" style={{ color: '#1b2f5a' }}>Email Address</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -65,13 +68,19 @@ const Login = ({ onLogin }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200"
+                  className="pl-10 h-11 border-gray-200 transition-all duration-200"
+                  style={{ 
+                    borderColor: '#1b2f5a',
+                    '--tw-ring-color': '#ff6a22'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ff6a22'}
+                  onBlur={(e) => e.target.style.borderColor = '#1b2f5a'}
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium" style={{ color: '#1b2f5a' }}>Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -81,7 +90,13 @@ const Login = ({ onLogin }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pl-10 pr-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200"
+                  className="pl-10 pr-10 h-11 border-gray-200 transition-all duration-200"
+                  style={{ 
+                    borderColor: '#1b2f5a',
+                    '--tw-ring-color': '#ff6a22'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ff6a22'}
+                  onBlur={(e) => e.target.style.borderColor = '#1b2f5a'}
                 />
                 <button
                   type="button"
@@ -95,8 +110,14 @@ const Login = ({ onLogin }) => {
             
             <Button
               type="submit"
-              className="w-full h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+              className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
               disabled={isLoading}
+              style={{ 
+                backgroundColor: '#1b2f5a',
+                borderColor: '#1b2f5a'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
@@ -110,8 +131,8 @@ const Login = ({ onLogin }) => {
           </form>
           
           <div className="mt-6 text-center">
-            <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-xs text-blue-600 font-medium">
+            <div className="rounded-lg p-3" style={{ backgroundColor: '#f8f9fa' }}>
+              <p className="text-xs font-medium" style={{ color: '#1b2f5a' }}>
                 💡 Demo Mode: Use any email and password to continue
               </p>
             </div>

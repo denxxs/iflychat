@@ -20,15 +20,20 @@ const MessageBubble = ({ message, isUser }) => {
         {/* Avatar */}
         <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${isUser ? 'ml-3' : 'mr-3'}`}
              style={{ 
-               background: isUser 
-                 ? 'linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)' 
-                 : 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)'
+               backgroundColor: isUser ? '#ff6a22' : '#1b2f5a'
              }}>
           {isUser ? (
             <User className="w-5 h-5 text-white" />
           ) : (
             <div className="w-6 h-6 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-blue-600 font-bold text-xs">i</span>
+              <div className="relative">
+                {/* "i" letter */}
+                <div className="w-1.5 h-1.5 rounded-full mb-0.5" style={{ backgroundColor: '#1b2f5a' }}></div>
+                <div className="w-0.5 h-3 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
+                {/* Orange accent bars */}
+                <div className="absolute -right-1 top-0 w-2 h-1 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
+                <div className="absolute -right-1 top-1 w-2 h-1 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
+              </div>
             </div>
           )}
         </div>
@@ -37,21 +42,30 @@ const MessageBubble = ({ message, isUser }) => {
         <div className={`group relative`}>
           <div className={`rounded-2xl px-4 py-3 shadow-lg transition-all duration-200 hover:shadow-xl ${
             isUser 
-              ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' 
+              ? 'text-white' 
               : 'bg-white text-gray-800 border border-gray-200'
-          }`}>
+          }`}
+          style={{
+            backgroundColor: isUser ? '#ff6a22' : 'white'
+          }}>
             
             {/* File attachment indicator */}
             {message.fileName && (
               <div className={`flex items-center space-x-2 mb-3 p-3 rounded-xl ${
                 isUser 
                   ? 'bg-white/20 backdrop-blur-sm' 
-                  : 'bg-gray-50 border border-gray-100'
-              }`}>
+                  : 'border border-gray-100'
+              }`}
+              style={{
+                backgroundColor: isUser ? 'rgba(255, 255, 255, 0.2)' : '#f8f9fa'
+              }}>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  isUser ? 'bg-white/20' : 'bg-blue-50'
-                }`}>
-                  <FileText className={`w-4 h-4 ${isUser ? 'text-white' : 'text-blue-600'}`} />
+                  isUser ? 'bg-white/20' : ''
+                }`}
+                style={{
+                  backgroundColor: isUser ? 'rgba(255, 255, 255, 0.2)' : '#1b2f5a'
+                }}>
+                  <FileText className={`w-4 h-4 ${isUser ? 'text-white' : 'text-white'}`} />
                 </div>
                 <div>
                   <p className={`text-sm font-medium ${isUser ? 'text-white' : 'text-gray-900'}`}>
@@ -93,14 +107,20 @@ const MessageBubble = ({ message, isUser }) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-green-600 hover:bg-green-50 p-1 h-auto"
+                className="text-gray-400 hover:text-white p-1 h-auto"
+                style={{ '--hover-bg': '#ff6a22' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 <ThumbsUp className="w-3 h-3" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-1 h-auto"
+                className="text-gray-400 hover:text-white p-1 h-auto"
+                style={{ '--hover-bg': '#dc2626' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 <ThumbsDown className="w-3 h-3" />
               </Button>

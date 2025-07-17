@@ -51,20 +51,24 @@ const FileUpload = ({ onFileUpload }) => {
       <div
         className={`border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 ${
           isDragging 
-            ? 'border-blue-400 bg-blue-50' 
+            ? 'border-orange-400 bg-orange-50' 
             : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        style={{
+          borderColor: isDragging ? '#ff6a22' : '#d1d5db',
+          backgroundColor: isDragging ? '#fff7ed' : '#f8f9fa'
+        }}
       >
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <Upload className="w-6 h-6 text-blue-600" />
+          <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#1b2f5a' }}>
+            <Upload className="w-6 h-6 text-white" />
           </div>
           
           <div>
-            <p className="text-sm font-medium text-gray-900 mb-1">
+            <p className="text-sm font-medium mb-1" style={{ color: '#1b2f5a' }}>
               Drop your legal document here
             </p>
             <p className="text-xs text-gray-500">
@@ -75,7 +79,21 @@ const FileUpload = ({ onFileUpload }) => {
           <Button
             onClick={handleUploadClick}
             variant="outline"
-            className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200"
+            className="transition-all duration-200"
+            style={{
+              borderColor: '#1b2f5a',
+              color: '#1b2f5a'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#ff6a22';
+              e.target.style.color = 'white';
+              e.target.style.borderColor = '#ff6a22';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = 'transparent';
+              e.target.style.color = '#1b2f5a';
+              e.target.style.borderColor = '#1b2f5a';
+            }}
           >
             <FileText className="w-4 h-4 mr-2" />
             Choose File

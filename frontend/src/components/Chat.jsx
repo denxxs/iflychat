@@ -113,25 +113,28 @@ const Chat = ({
 
   if (!activeChat) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#f8f9fa' }}>
         <div className="text-center max-w-md px-6">
           <div className="relative mb-8">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl flex items-center justify-center mx-auto shadow-2xl">
+            {/* Indifly Ventures Logo */}
+            <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto shadow-2xl" style={{ backgroundColor: '#1b2f5a' }}>
               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">i</span>
+                <div className="relative">
+                  {/* "i" letter */}
+                  <div className="w-4 h-4 rounded-full mb-2" style={{ backgroundColor: '#1b2f5a' }}></div>
+                  <div className="w-2 h-8 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
+                  {/* Orange accent bars */}
+                  <div className="absolute -right-2 top-0 w-5 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
+                  <div className="absolute -right-2 top-4 w-5 h-2 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
                 </div>
               </div>
             </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">V</span>
-            </div>
-            <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-yellow-400 rounded-full border-3 border-white flex items-center justify-center shadow-lg">
-              <Sparkles className="w-3 h-3 text-yellow-700" />
+            <div className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff6a22' }}>
+              <Sparkles className="w-3 h-3 text-white" />
             </div>
           </div>
           
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold mb-4" style={{ color: '#1b2f5a' }}>
             Indifly Ventures Legal Assistant
           </h2>
           <p className="text-gray-600 text-lg mb-8 leading-relaxed">
@@ -139,16 +142,30 @@ const Chat = ({
           </p>
           
           <div className="space-y-3">
-            <p className="text-sm font-medium text-gray-700 mb-4">Try asking about:</p>
+            <p className="text-sm font-medium mb-4" style={{ color: '#1b2f5a' }}>Try asking about:</p>
             <div className="grid grid-cols-1 gap-2">
               {suggestedPrompts.map((prompt, index) => (
                 <Button
                   key={index}
                   variant="outline"
                   className="text-left justify-start h-auto p-3 bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-md transition-all duration-200 border-gray-200 text-sm"
+                  style={{
+                    borderColor: '#1b2f5a',
+                    color: '#1b2f5a'
+                  }}
                   onClick={() => setMessage(prompt)}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#ff6a22';
+                    e.target.style.color = 'white';
+                    e.target.style.borderColor = '#ff6a22';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'white';
+                    e.target.style.color = '#1b2f5a';
+                    e.target.style.borderColor = '#1b2f5a';
+                  }}
                 >
-                  <span className="text-gray-700">{prompt}</span>
+                  <span>{prompt}</span>
                 </Button>
               ))}
             </div>
@@ -157,7 +174,10 @@ const Chat = ({
           {isMobile && !sidebarOpen && (
             <Button
               onClick={onToggleSidebar}
-              className="mt-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+              className="mt-6 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+              style={{ backgroundColor: '#1b2f5a' }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
             >
               <Menu className="w-4 h-4 mr-2" />
               Open Chat History
@@ -169,9 +189,9 @@ const Chat = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="flex-1 flex flex-col" style={{ backgroundColor: '#f8f9fa' }}>
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 p-4 shadow-sm">
+      <div className="border-b border-gray-200/50 p-4 shadow-sm" style={{ backgroundColor: '#1b2f5a' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {isMobile && !sidebarOpen && (
@@ -179,26 +199,29 @@ const Chat = ({
                 onClick={onToggleSidebar}
                 variant="ghost"
                 size="sm"
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 md:hidden"
+                className="text-white hover:bg-white/10 md:hidden"
               >
                 <Menu className="w-5 h-5" />
               </Button>
             )}
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center shadow-md">
-                <div className="w-6 h-6 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-blue-600 font-bold text-xs">i</span>
+              {/* Indifly Ventures Logo */}
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
+                <div className="relative">
+                  {/* "i" letter */}
+                  <div className="w-2 h-2 rounded-full mb-1" style={{ backgroundColor: '#1b2f5a' }}></div>
+                  <div className="w-1 h-5 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
+                  {/* Orange accent bars */}
+                  <div className="absolute -right-1 top-0 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
+                  <div className="absolute -right-1 top-2 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
                 </div>
-              </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full border-2 border-white flex items-center justify-center">
-                <span className="text-white font-bold text-xs">V</span>
               </div>
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold text-lg">
+              <h1 className="text-white font-bold text-lg">
                 {activeChat.title}
               </h1>
-              <p className="text-gray-500 text-sm">
+              <p className="text-white/70 text-sm">
                 Legal Assistant • Online
               </p>
             </div>
@@ -207,7 +230,7 @@ const Chat = ({
           <Button
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            className="text-white/70 hover:text-white hover:bg-white/10"
           >
             <MoreVertical className="w-5 h-5" />
           </Button>
@@ -256,6 +279,15 @@ const Chat = ({
               variant="ghost"
               size="sm"
               className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 mb-2"
+              style={{ '--hover-bg': '#ff6a22' }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#ff6a22';
+                e.target.style.color = 'white';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.color = '#6b7280';
+              }}
             >
               <Paperclip className="w-5 h-5" />
             </Button>
@@ -267,14 +299,26 @@ const Chat = ({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Ask me anything about legal matters..."
-                  className="pr-12 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 bg-white/90 backdrop-blur-sm transition-all duration-200"
+                  className="pr-12 h-12 bg-white/90 backdrop-blur-sm transition-all duration-200"
+                  style={{
+                    borderColor: '#1b2f5a',
+                    '--tw-ring-color': '#ff6a22'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ff6a22'}
+                  onBlur={(e) => e.target.style.borderColor = '#1b2f5a'}
                   disabled={isLoading}
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                   <Button
                     type="submit"
                     disabled={!message.trim() || isLoading}
-                    className="h-8 w-8 p-0 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.05]"
+                    className="h-8 w-8 p-0 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.05]"
+                    style={{ 
+                      backgroundColor: '#1b2f5a',
+                      borderColor: '#1b2f5a'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
                   >
                     <Send className="w-4 h-4" />
                   </Button>
@@ -285,7 +329,7 @@ const Chat = ({
           
           <div className="mt-3 text-center">
             <p className="text-xs text-gray-500">
-              <span className="font-medium">Legal Assistant</span> can provide guidance but responses should be verified with qualified legal professionals.
+              <span className="font-medium" style={{ color: '#1b2f5a' }}>Legal Assistant</span> can provide guidance but responses should be verified with qualified legal professionals.
             </p>
           </div>
         </div>

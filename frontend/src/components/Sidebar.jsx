@@ -33,7 +33,10 @@ const Sidebar = ({
     return (
       <Button
         onClick={onToggle}
-        className="fixed top-4 left-4 z-50 md:hidden bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white shadow-lg border-0"
+        className="fixed top-4 left-4 z-50 md:hidden text-white shadow-lg border-0"
+        style={{ backgroundColor: '#1b2f5a' }}
+        onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+        onMouseLeave={(e) => e.target.style.backgroundColor = '#1b2f5a'}
       >
         <Menu className="w-5 h-5" />
       </Button>
@@ -55,28 +58,32 @@ const Sidebar = ({
           isMobile 
             ? 'fixed left-0 top-0 h-full z-50 transform transition-transform duration-300'
             : 'relative'
-        } w-80 flex flex-col bg-white border-r border-gray-200/50 shadow-xl`}
+        } w-80 flex flex-col shadow-xl`}
         style={{ 
+          backgroundColor: '#1b2f5a',
           transform: isMobile ? (isOpen ? 'translateX(0)' : 'translateX(-100%)') : 'none'
         }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-100">
+        <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center shadow-md">
-                  <div className="w-6 h-6 bg-white rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 font-bold text-xs">i</span>
+                {/* Indifly Ventures Logo */}
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md">
+                  <div className="relative">
+                    {/* "i" letter */}
+                    <div className="w-2 h-2 rounded-full mb-1" style={{ backgroundColor: '#1b2f5a' }}></div>
+                    <div className="w-1 h-5 rounded-full" style={{ backgroundColor: '#1b2f5a' }}></div>
+                    {/* Orange accent bars */}
+                    <div className="absolute -right-1 top-0 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
+                    <div className="absolute -right-1 top-2 w-3 h-1.5 rounded-sm" style={{ backgroundColor: '#ff6a22' }}></div>
                   </div>
-                </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full border-2 border-white flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">V</span>
                 </div>
               </div>
               <div>
-                <h2 className="text-gray-900 font-bold text-lg">Legal Assistant</h2>
-                <p className="text-gray-500 text-xs font-medium">Indifly Ventures</p>
+                <h2 className="text-white font-bold text-lg">Legal Assistant</h2>
+                <p className="text-white/70 text-xs font-medium">Indifly Ventures</p>
               </div>
             </div>
             
@@ -85,7 +92,7 @@ const Sidebar = ({
                 onClick={onToggle}
                 variant="ghost"
                 size="sm"
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 md:hidden"
+                className="text-white hover:bg-white/10 md:hidden"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -94,15 +101,15 @@ const Sidebar = ({
         </div>
 
         {/* User Profile */}
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-blue-600" />
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-gray-900 text-sm font-semibold">{user.name}</p>
-                <p className="text-gray-500 text-xs">{user.email}</p>
+                <p className="text-white text-sm font-semibold">{user.name}</p>
+                <p className="text-white/70 text-xs">{user.email}</p>
               </div>
             </div>
             
@@ -110,7 +117,7 @@ const Sidebar = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2"
+                className="text-white/70 hover:text-white hover:bg-white/10 p-2"
               >
                 <Settings className="w-4 h-4" />
               </Button>
@@ -118,7 +125,10 @@ const Sidebar = ({
                 onClick={onLogout}
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2"
+                className="text-white/70 hover:text-white p-2"
+                style={{ '--hover-bg': '#ff6a22' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -130,7 +140,13 @@ const Sidebar = ({
         <div className="p-4">
           <Button
             onClick={onNewChat}
-            className="w-full justify-start h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+            className="w-full justify-start h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+            style={{ 
+              backgroundColor: '#ff6a22',
+              borderColor: '#ff6a22'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#e55a1a'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#ff6a22'}
           >
             <Plus className="w-5 h-5 mr-3" />
             New Legal Consultation
@@ -140,7 +156,7 @@ const Sidebar = ({
         {/* Chat History */}
         <div className="flex-1 overflow-hidden">
           <div className="px-4 py-2">
-            <h3 className="text-gray-700 text-sm font-semibold mb-3">Recent Conversations</h3>
+            <h3 className="text-white/90 text-sm font-semibold mb-3">Recent Conversations</h3>
           </div>
           
           <ScrollArea className="flex-1 px-2">
@@ -150,22 +166,35 @@ const Sidebar = ({
                   key={chat.id}
                   className={`group relative rounded-lg transition-all duration-200 ${
                     activeChat?.id === chat.id 
-                      ? 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200' 
-                      : 'hover:bg-gray-50'
+                      ? 'bg-white/20 border border-white/30' 
+                      : 'hover:bg-white/10'
                   }`}
                 >
                   <Button
                     onClick={() => onChatSelect(chat)}
                     variant="ghost"
                     className={`w-full justify-start text-left p-3 h-auto ${
-                      activeChat?.id === chat.id ? 'text-blue-700' : 'text-gray-700 hover:text-gray-900'
+                      activeChat?.id === chat.id ? 'text-white' : 'text-white/80 hover:text-white'
                     }`}
+                    style={{
+                      backgroundColor: activeChat?.id === chat.id ? '#ff6a22' : 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (activeChat?.id !== chat.id) {
+                        e.target.style.backgroundColor = '#ff6a22';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeChat?.id !== chat.id) {
+                        e.target.style.backgroundColor = 'transparent';
+                      }
+                    }}
                   >
                     <div className="flex items-center space-x-3 w-full">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                         activeChat?.id === chat.id 
-                          ? 'bg-blue-200 text-blue-700' 
-                          : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
+                          ? 'bg-white/20 text-white' 
+                          : 'bg-white/10 text-white/70'
                       }`}>
                         <MessageSquare className="w-4 h-4" />
                       </div>
@@ -174,7 +203,7 @@ const Sidebar = ({
                           {formatChatTitle(chat)}
                         </p>
                         <p className={`text-xs mt-0.5 ${
-                          activeChat?.id === chat.id ? 'text-blue-600' : 'text-gray-500'
+                          activeChat?.id === chat.id ? 'text-white/80' : 'text-white/60'
                         }`}>
                           {formatDate(chat.timestamp)}
                         </p>
@@ -186,7 +215,10 @@ const Sidebar = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1 transition-all duration-200"
+                    className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white p-1 transition-all duration-200"
+                    style={{ '--hover-bg': '#ff6a22' }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#ff6a22'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
@@ -197,12 +229,12 @@ const Sidebar = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-white/10">
           <div className="text-center">
-            <p className="text-xs text-gray-500">
-              Powered by <span className="font-semibold text-blue-600">Indifly Ventures</span>
+            <p className="text-white/70 text-xs">
+              Powered by <span className="font-semibold text-white">Indifly Ventures</span>
             </p>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-blue-600 to-orange-500 mx-auto mt-2"></div>
+            <div className="w-16 h-0.5 mx-auto mt-2" style={{ backgroundColor: '#ff6a22' }}></div>
           </div>
         </div>
       </div>
