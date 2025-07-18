@@ -157,22 +157,9 @@ const Sidebar = ({
                       variant="ghost"
                       className={`w-full justify-start text-left p-3 h-auto rounded-lg transition-all duration-200 ${
                         isActive 
-                          ? 'text-white' 
-                          : 'text-white/80 hover:text-white'
+                          ? 'text-white bg-ifly-orange hover:bg-ifly-orange-hover' 
+                          : 'text-white/80 hover:text-white hover:bg-ifly-orange'
                       }`}
-                      style={{
-                        backgroundColor: isActive ? '#fa6620' : 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive) {
-                          e.target.style.backgroundColor = '#fa6620';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) {
-                          e.target.style.backgroundColor = 'transparent';
-                        }
-                      }}
                     >
                       <div className="flex items-center space-x-3 w-full">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
@@ -195,7 +182,7 @@ const Sidebar = ({
                               ? 'text-white/80' 
                               : 'text-white/60 group-hover:text-white/80'
                           }`}>
-                            {formatDate(chat.timestamp)}
+                            {formatDate(chat.updated_at || chat.created_at || chat.timestamp || new Date().toISOString())}
                           </p>
                         </div>
                       </div>
@@ -205,15 +192,13 @@ const Sidebar = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white p-1 transition-all duration-200"
+                      className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white hover:bg-ifly-orange p-1 transition-all duration-200"
                       onClick={(e) => {
                         e.stopPropagation();
                         if (onDeleteChat && window.confirm('Are you sure you want to delete this chat?')) {
                           onDeleteChat(chat.id);
                         }
                       }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>
@@ -228,7 +213,7 @@ const Sidebar = ({
         <div className="p-4 border-t border-white/10">
           <div className="text-center">
             <p className="text-white/70 text-xs">
-              Powered by <span className="font-semibold text-white">Indifly Ventures</span>
+              Powered by <span className="font-semibold text-white">Hapticware</span>
             </p>
             <div className="w-16 h-0.5 mx-auto mt-2" style={{ backgroundColor: '#fa6620' }}></div>
           </div>

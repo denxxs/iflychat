@@ -20,7 +20,14 @@ const IndiflyLogo = ({ size = 'md', className = '' }) => {
       height={height} 
       viewBox="0 0 200 200"
       className={className}
+      style={{ borderRadius: '25%', overflow: 'hidden' }}
     >
+      <defs>
+        <clipPath id="roundedCorners">
+          <rect x="0" y="0" width="200" height="200" rx="40" ry="40"/>
+        </clipPath>
+      </defs>
+      <g clipPath="url(#roundedCorners)">
       <path 
         d="M0 0 C66 0 132 0 200 0 C200 66 200 132 200 200 C134 200 68 200 0 200 C0 134 0 68 0 0 Z" 
         fill="#02295c" 
@@ -46,6 +53,7 @@ const IndiflyLogo = ({ size = 'md', className = '' }) => {
         fill="#FAFBFC" 
         transform="translate(39,17)"
       />
+      </g>
     </svg>
   );
 };

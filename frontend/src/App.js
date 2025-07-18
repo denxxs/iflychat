@@ -132,7 +132,7 @@ const ChatApp = () => {
     }
   };
 
-  const handleNewChat = async () => {
+  const handleNewChat = async (options = {}) => {
     try {
       const newChat = await apiService.createChat({
         title: 'New Legal Consultation'
@@ -144,8 +144,12 @@ const ChatApp = () => {
       if (isMobile) {
         setIsSidebarOpen(false);
       }
+      
+      // If upload is requested, return a flag
+      return { chat: newChat, shouldShowUpload: options.showFileUpload };
     } catch (error) {
       console.error('Error creating new chat:', error);
+      return null;
     }
   };
 
@@ -210,6 +214,22 @@ const ChatApp = () => {
       }
     }
 
+    // Create user message immediately and add to UI
+    const userMessage = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: message.content,
+      timestamp: new Date().toISOString(),
+      file_name: files.length > 0 ? files[0].name : undefined
+    };
+
+    // Add user message to chat immediately
+    const chatWithUserMessage = {
+      ...currentChat,
+      messages: [...(currentChat.messages || []), userMessage],
+    };
+    setActiveChat(chatWithUserMessage);
+
     try {
       // Upload files first if any
       const uploadedFiles = [];
@@ -232,13 +252,12 @@ const ChatApp = () => {
 
       const response = await apiService.sendMessage(currentChat.id, messageData);
       
-      // Update active chat with new messages
-      if (response.user_message && response.ai_response) {
+      // Update active chat with AI response (user message already added)
+      if (response.ai_response) {
         const updatedChat = {
-          ...currentChat,
+          ...chatWithUserMessage,
           messages: [
-            ...(currentChat.messages || []),
-            response.user_message,
+            ...chatWithUserMessage.messages,
             response.ai_response
           ],
           title: response.chat_name || currentChat.title,
@@ -257,18 +276,17 @@ const ChatApp = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       
-      // Add user message locally even if API fails
-      const userMessage = {
-        id: Date.now().toString(),
-        type: 'user',
-        content: message.content,
+      // Add error message if API fails (user message already added)
+      const errorMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'bot',
+        content: 'Sorry, I encountered an error while processing your message. Please try again.',
         timestamp: new Date().toISOString(),
-        file_name: files.length > 0 ? files[0].name : undefined
       };
 
       const updatedChat = {
-        ...currentChat,
-        messages: [...(currentChat.messages || []), userMessage],
+        ...chatWithUserMessage,
+        messages: [...chatWithUserMessage.messages, errorMessage],
       };
 
       setActiveChat(updatedChat);
@@ -314,6 +332,7 @@ const ChatApp = () => {
         activeChat={activeChat}
         onSendMessage={handleSendMessage}
         onToggleSidebar={toggleSidebar}
+        onNewChat={handleNewChat}
         isMobile={isMobile}
         sidebarOpen={isSidebarOpen}
       />

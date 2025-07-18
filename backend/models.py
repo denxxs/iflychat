@@ -163,6 +163,10 @@ class Chat(BaseModel):
         rows_affected = await execute_update(query, tuple(values))
         return rows_affected > 0
     
+    async def update_title(self, title: str) -> bool:
+        """Update chat title specifically"""
+        return await self.update(title=title)
+    
     async def delete(self) -> bool:
         """Delete chat"""
         query = "DELETE FROM chats WHERE id = %s"

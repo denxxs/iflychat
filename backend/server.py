@@ -410,9 +410,30 @@ async def send_message(
         except Exception as e:
             logger.warning(f"Failed to record AI usage: {e}")
         
+        # Auto-generate chat name if this is the first user message
+        chat_name = None
+        try:
+            message_count = len(recent_messages)
+            if message_count <= 1:  # First message (user message just created)
+                logger.info(f"🏷️ Generating chat name for first message...")
+                name_response = await bedrock_service.generate_chat_name(
+                    message=message_data.content,
+                    file_content=file_content if file_content else None,
+                    file_names=[message_data.file_name] if message_data.file_name else None
+                )
+                
+                if name_response.get("suggested_name"):
+                    chat_name = name_response["suggested_name"]
+                    # Update chat title
+                    await chat.update_title(chat_name)
+                    logger.info(f"✅ Generated chat name: {chat_name}")
+        except Exception as e:
+            logger.warning(f"Failed to generate chat name: {e}")
+        
         return ChatMessageResponse(
             user_message=MessageResponse.model_validate(user_message.to_dict()),
             ai_response=MessageResponse.model_validate(ai_message.to_dict()) if ai_message else None,
+            chat_name=chat_name,
             processing_time=ai_response.get("processing_time", 0)
         )
         

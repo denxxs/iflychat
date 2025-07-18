@@ -12,6 +12,7 @@ const Chat = ({
   activeChat, 
   onSendMessage, 
   onToggleSidebar, 
+  onNewChat,
   isMobile = false,
   sidebarOpen = true 
 }) => {
@@ -59,6 +60,7 @@ const Chat = ({
     setShowFileUpload(false);
 
     try {
+      // If no active chat, create a message that will trigger a new chat
       await onSendMessage({ 
         content: message.trim() || `Please analyze this document: ${file.name}` 
       }, [file]);
@@ -160,29 +162,14 @@ const Chat = ({
             </div>
             <div className="text-center">
               <p className="text-gray-500 mb-4">Start a new conversation to begin</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex justify-center">
                 <Button
-                  onClick={() => {
-                    // Focus on the input field at the bottom to start typing
-                    if (inputRef.current) {
-                      inputRef.current.focus();
-                      inputRef.current.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
+                  onClick={onNewChat}
                   style={{ backgroundColor: '#fa6620', borderColor: '#fa6620' }}
                   className="min-w-[140px]"
                 >
                   <Sparkles className="h-4 w-4 mr-2" />
                   Start Chat
-                </Button>
-                <Button
-                  onClick={() => setShowFileUpload(true)}
-                  variant="outline"
-                  style={{ borderColor: '#02295c', color: '#02295c' }}
-                  className="min-w-[140px]"
-                >
-                  <Paperclip className="h-4 w-4 mr-2" />
-                  Upload Document
                 </Button>
               </div>
             </div>
@@ -235,20 +222,60 @@ const Chat = ({
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-6 max-w-4xl mx-auto">
-          {messages.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              message={formatMessage(msg)}
-              isUser={msg.type === 'user'}
-            />
-          ))}
-          
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="max-w-xs lg:max-w-md">
-                <Loader />
+          {messages.length === 0 && !isLoading ? (
+            /* Welcome screen for empty chat */
+            <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
+              <div className="mb-8">
+                <IndiflyLogo size="lg" className="mx-auto mb-4 drop-shadow-md" />
+                <h2 className="text-2xl font-bold mb-2" style={{ color: '#02295c' }}>
+                  Ready to assist you
+                </h2>
+                <p className="text-gray-600 mb-6 max-w-md">
+                  I'm your AI legal assistant. Ask me about contracts, compliance, business formation, or upload a document for analysis.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl mb-8">
+                <div className="p-4 rounded-lg border border-gray-200 hover:border-orange-200 transition-colors">
+                  <h3 className="font-semibold mb-2" style={{ color: '#02295c' }}>📄 Document Analysis</h3>
+                  <p className="text-sm text-gray-600">Upload contracts, NDAs, or legal documents for detailed review</p>
+                </div>
+                <div className="p-4 rounded-lg border border-gray-200 hover:border-orange-200 transition-colors">
+                  <h3 className="font-semibold mb-2" style={{ color: '#02295c' }}>⚖️ Legal Advice</h3>
+                  <p className="text-sm text-gray-600">Get guidance on business law, compliance, and regulations</p>
+                </div>
+                <div className="p-4 rounded-lg border border-gray-200 hover:border-orange-200 transition-colors">
+                  <h3 className="font-semibold mb-2" style={{ color: '#02295c' }}>🏢 Business Formation</h3>
+                  <p className="text-sm text-gray-600">Help with company setup, structure, and incorporation</p>
+                </div>
+                <div className="p-4 rounded-lg border border-gray-200 hover:border-orange-200 transition-colors">
+                  <h3 className="font-semibold mb-2" style={{ color: '#02295c' }}>📋 Contract Review</h3>
+                  <p className="text-sm text-gray-600">Review terms, identify risks, and suggest improvements</p>
+                </div>
+              </div>
+              
+              <div className="text-sm text-gray-500">
+                <p>💡 <strong>Tip:</strong> Be specific with your questions for better assistance</p>
               </div>
             </div>
+          ) : (
+            <>
+              {messages.map((msg) => (
+                <MessageBubble
+                  key={msg.id}
+                  message={formatMessage(msg)}
+                  isUser={msg.type === 'user'}
+                />
+              ))}
+              
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="max-w-xs lg:max-w-md">
+                    <Loader />
+                  </div>
+                </div>
+              )}
+            </>
           )}
           
           <div ref={messagesEndRef} />

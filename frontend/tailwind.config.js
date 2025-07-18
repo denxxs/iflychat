@@ -15,6 +15,10 @@ module.exports = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			// Custom brand colors
+  			'ifly-orange': '#fa6620',
+  			'ifly-orange-hover': '#e55a1a',
+  			'ifly-blue': '#02295c',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

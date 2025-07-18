@@ -125,13 +125,36 @@ class S3FileService:
                 extracted_text, success = self._extract_docx_text(file_content)
                 
             elif file_extension == '.txt' or content_type == 'text/plain':
-                extracted_text = file_content.decode('utf-8', errors='ignore')
-                success = True
+                try:
+                    raw_text = file_content.decode('utf-8', errors='ignore')
+                    extracted_text = self._clean_extracted_text(raw_text)
+                    success = True
+                except Exception as e:
+                    logger.error(f"Text file decoding error: {e}")
+                    extracted_text = f"Error reading text file: {str(e)}"
+                    success = False
                 
             else:
                 logger.warning(f"Unsupported file type: {file_extension}, {content_type}")
                 extracted_text = f"File type {file_extension} is not supported for text extraction."
                 success = False
+            
+            # Final safety check - ensure the text is safe for database storage
+            if success and extracted_text:
+                try:
+                    # Test if the text can be safely encoded/decoded
+                    test_encoded = extracted_text.encode('utf-8')
+                    test_decoded = test_encoded.decode('utf-8')
+                    
+                    # Limit the text length to prevent database issues
+                    if len(extracted_text) > 100000:  # 100KB limit
+                        extracted_text = extracted_text[:100000] + "\n\n[Text truncated due to length...]"
+                        logger.info(f"Text truncated for {file_name} (original length: {len(extracted_text)})")
+                    
+                except UnicodeError as e:
+                    logger.error(f"Unicode error in extracted text from {file_name}: {e}")
+                    extracted_text = "Error: File contains characters that cannot be processed"
+                    success = False
             
             return extracted_text, success
             
@@ -149,14 +172,18 @@ class S3FileService:
             for page_num, page in enumerate(pdf_reader.pages):
                 try:
                     page_text = page.extract_text()
-                    if page_text.strip():
-                        text_content.append(f"--- Page {page_num + 1} ---\n{page_text}")
+                    if page_text and page_text.strip():
+                        # Clean the text to handle encoding issues
+                        cleaned_text = self._clean_extracted_text(page_text)
+                        if cleaned_text.strip():
+                            text_content.append(f"--- Page {page_num + 1} ---\n{cleaned_text}")
                 except Exception as e:
                     logger.warning(f"Error extracting page {page_num + 1}: {e}")
                     continue
             
             if text_content:
-                return "\n\n".join(text_content), True
+                final_text = "\n\n".join(text_content)
+                return final_text, True
             else:
                 return "No text content found in PDF", False
                 
@@ -174,27 +201,76 @@ class S3FileService:
             
             # Extract paragraphs
             for paragraph in doc.paragraphs:
-                if paragraph.text.strip():
-                    text_content.append(paragraph.text)
+                if paragraph.text and paragraph.text.strip():
+                    cleaned_text = self._clean_extracted_text(paragraph.text)
+                    if cleaned_text.strip():
+                        text_content.append(cleaned_text)
             
             # Extract tables
             for table in doc.tables:
                 for row in table.rows:
                     row_text = []
                     for cell in row.cells:
-                        if cell.text.strip():
-                            row_text.append(cell.text.strip())
+                        if cell.text and cell.text.strip():
+                            cleaned_text = self._clean_extracted_text(cell.text)
+                            if cleaned_text.strip():
+                                row_text.append(cleaned_text)
                     if row_text:
                         text_content.append(" | ".join(row_text))
             
             if text_content:
-                return "\n\n".join(text_content), True
+                final_text = "\n\n".join(text_content)
+                return final_text, True
             else:
                 return "No text content found in document", False
                 
         except Exception as e:
             logger.error(f"DOCX extraction error: {e}")
             return f"Error reading DOCX: {str(e)}", False
+    
+    def _clean_extracted_text(self, text: str) -> str:
+        """Clean extracted text to handle encoding issues and problematic characters"""
+        try:
+            import re
+            
+            # Remove or replace problematic Unicode characters
+            # Remove surrogate pairs and other problematic characters
+            text = re.sub(r'[\ud800-\udfff]', '', text)  # Remove surrogate pairs
+            text = re.sub(r'[\ufeff\ufffe]', '', text)   # Remove BOM characters
+            text = re.sub(r'[\u0000-\u0008\u000b\u000c\u000e-\u001f]', '', text)  # Remove control characters
+            
+            # Replace common problematic characters with ASCII equivalents
+            replacements = {
+                '\u2018': "'",  # Left single quotation mark
+                '\u2019': "'",  # Right single quotation mark
+                '\u201c': '"',  # Left double quotation mark
+                '\u201d': '"',  # Right double quotation mark
+                '\u2013': '-',  # En dash
+                '\u2014': '-',  # Em dash
+                '\u2026': '...',  # Horizontal ellipsis
+                '\u00a0': ' ',  # Non-breaking space
+            }
+            
+            for old_char, new_char in replacements.items():
+                text = text.replace(old_char, new_char)
+            
+            # Normalize whitespace
+            text = re.sub(r'\s+', ' ', text)  # Replace multiple whitespace with single space
+            text = text.strip()
+            
+            # Ensure the final text is valid UTF-8
+            # This will replace any remaining problematic characters
+            text = text.encode('utf-8', errors='ignore').decode('utf-8')
+            
+            return text
+            
+        except Exception as e:
+            logger.error(f"Text cleaning error: {e}")
+            # If cleaning fails, try basic cleanup
+            try:
+                return text.encode('utf-8', errors='ignore').decode('utf-8').strip()
+            except:
+                return "Error processing text content"
     
     async def generate_presigned_url(
         self, 

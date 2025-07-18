@@ -112,6 +112,7 @@ class ChatMessageRequest(BaseModel):
 class ChatMessageResponse(BaseModel):
     user_message: MessageResponse
     ai_response: Optional[MessageResponse] = None
+    chat_name: Optional[str] = None
     processing_time: float = 0.0
 
 # Chat Naming Schemas
