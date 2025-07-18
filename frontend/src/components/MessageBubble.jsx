@@ -1,8 +1,9 @@
 import React from 'react';
-import { User, FileText, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { User, FileText, Copy } from 'lucide-react';
 import { Button } from './ui/button';
 import IndiflyLogo from './IndiflyLogo';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const MessageBubble = ({ message, isUser }) => {
   const formatTime = (timestamp) => {
@@ -82,6 +83,7 @@ const MessageBubble = ({ message, isUser }) => {
                 // For AI messages, render markdown
                 <div className="prose prose-sm max-w-none">
                   <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
                     components={{
                       // Custom styling for markdown elements to match chat theme
                       p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -95,6 +97,39 @@ const MessageBubble = ({ message, isUser }) => {
                       em: ({children}) => <em className="italic">{children}</em>,
                       code: ({children}) => <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono">{children}</code>,
                       pre: ({children}) => <pre className="bg-gray-100 p-2 rounded text-xs font-mono overflow-x-auto mb-2">{children}</pre>,
+                      // Table components with horizontal scroll
+                      table: ({children}) => (
+                        <div className="overflow-x-auto mb-4 border border-gray-200 rounded-lg">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            {children}
+                          </table>
+                        </div>
+                      ),
+                      thead: ({children}) => (
+                        <thead className="bg-gray-50">
+                          {children}
+                        </thead>
+                      ),
+                      tbody: ({children}) => (
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {children}
+                        </tbody>
+                      ),
+                      tr: ({children}) => (
+                        <tr className="hover:bg-gray-50">
+                          {children}
+                        </tr>
+                      ),
+                      th: ({children}) => (
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                          {children}
+                        </th>
+                      ),
+                      td: ({children}) => (
+                        <td className="px-3 py-2 text-sm text-gray-800 border-b border-gray-100">
+                          {children}
+                        </td>
+                      ),
                     }}
                   >
                     {message.content}
@@ -121,26 +156,6 @@ const MessageBubble = ({ message, isUser }) => {
                 className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 h-auto"
               >
                 <Copy className="w-3 h-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white p-1 h-auto"
-                style={{ '--hover-bg': '#fa6620' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-              >
-                <ThumbsUp className="w-3 h-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white p-1 h-auto"
-                style={{ '--hover-bg': '#dc2626' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-              >
-                <ThumbsDown className="w-3 h-3" />
               </Button>
             </div>
           )}

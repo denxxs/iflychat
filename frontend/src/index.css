@@ -24,20 +24,20 @@ code {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.5);
-  border-radius: 2px;
+  background: rgba(75, 85, 99, 0.6);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.8);
+  background: rgba(75, 85, 99, 0.9);
 }
 
 /* Smooth animations */

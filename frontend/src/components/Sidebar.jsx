@@ -137,13 +137,13 @@ const Sidebar = ({
         </div>
 
         {/* Chat History */}
-        <div className="flex-1 overflow-hidden">
-          <div className="px-4 py-2">
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="px-4 py-2 flex-shrink-0">
             <h3 className="text-white/90 text-sm font-semibold mb-3">Recent Conversations</h3>
           </div>
           
-          <ScrollArea className="flex-1 px-2">
-            <div className="space-y-1">
+          <ScrollArea className="flex-1 px-2 min-h-0">
+            <div className="space-y-1 pb-4">
               {chats.map((chat) => {
                 const isActive = activeChat?.id === chat.id;
                 
