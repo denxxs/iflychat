@@ -112,15 +112,14 @@ const Chat = ({
     const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
     const wasAtBottom = scrollHeight - scrollTop - clientHeight < 50;
     
-    // Only auto-scroll to bottom if user was already at the bottom
-    if (wasAtBottom) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-      // After auto-scroll, ensure button is hidden
-      setTimeout(() => handleScroll(), 50);
-    } else {
-      // If user was scrolled up, check if button should be shown
-      setTimeout(() => handleScroll(), 50);
-    }
+    // Always auto-scroll to bottom when new messages arrive or when loading starts/stops
+    setTimeout(() => {
+      if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        handleScroll(); // Update button state after scrolling
+      }
+    }, 50);
+    
   }, [activeChat?.messages, isLoading]);
 
   useEffect(() => {
