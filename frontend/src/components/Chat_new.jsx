@@ -160,31 +160,14 @@ const Chat = ({
             </div>
             <div className="text-center">
               <p className="text-gray-500 mb-4">Start a new conversation to begin</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  onClick={() => {
-                    // Focus on the input field at the bottom to start typing
-                    if (inputRef.current) {
-                      inputRef.current.focus();
-                      inputRef.current.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  style={{ backgroundColor: '#fa6620', borderColor: '#fa6620' }}
-                  className="min-w-[140px]"
-                >
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Start Chat
-                </Button>
-                <Button
-                  onClick={() => setShowFileUpload(true)}
-                  variant="outline"
-                  style={{ borderColor: '#02295c', color: '#02295c' }}
-                  className="min-w-[140px]"
-                >
-                  <Paperclip className="h-4 w-4 mr-2" />
-                  Upload Document
-                </Button>
-              </div>
+              <Button
+                onClick={() => setShowFileUpload(true)}
+                className="mr-4"
+                style={{ backgroundColor: '#02295c', borderColor: '#02295c' }}
+              >
+                <Paperclip className="h-4 w-4 mr-2" />
+                Upload Document
+              </Button>
             </div>
           </div>
         </div>
@@ -239,7 +222,6 @@ const Chat = ({
             <MessageBubble
               key={msg.id}
               message={formatMessage(msg)}
-              isUser={msg.type === 'user'}
             />
           ))}
           
@@ -308,7 +290,7 @@ const Chat = ({
               Upload Legal Document
             </h3>
             <FileUpload
-              onFileUpload={handleFileUpload}
+              onFileSelect={handleFileUpload}
               onCancel={() => setShowFileUpload(false)}
             />
           </div>

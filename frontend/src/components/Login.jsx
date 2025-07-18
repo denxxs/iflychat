@@ -5,27 +5,36 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import IndiflyLogo from './IndiflyLogo';
+import { authHelpers } from '../services/api';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Mock login - simulate API call
-    setTimeout(() => {
-      onLogin({
-        id: '1',
-        name: email.split('@')[0],
-        email: email,
-        isLoggedIn: true
-      });
+    try {
+      const result = await authHelpers.loginUser({ email, password });
+      
+      if (result.success) {
+        onLogin({
+          ...result.user,
+          isLoggedIn: true
+        });
+      } else {
+        setError(result.error || 'Login failed. Please check your credentials.');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -97,6 +106,12 @@ const Login = ({ onLogin }) => {
               </div>
             </div>
             
+            {error && (
+              <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200">
+                <p className="text-sm text-red-600 font-medium">{error}</p>
+              </div>
+            )}
+            
             <Button
               type="submit"
               className="w-full h-11 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
@@ -122,7 +137,7 @@ const Login = ({ onLogin }) => {
           <div className="mt-6 text-center">
             <div className="rounded-lg p-3" style={{ backgroundColor: '#f8f9fa' }}>
               <p className="text-xs font-medium" style={{ color: '#02295c' }}>
-                💡 Demo Mode: Use any email and password to continue
+                💡 For testing: test@iflychat.com / testpass123
               </p>
             </div>
           </div>

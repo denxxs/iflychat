@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
 import Chat from './components/Chat';
-import { mockChats, mockUser, saveToLocalStorage, getFromLocalStorage, generateChatId } from './mock';
+import apiService, { authHelpers } from './services/api';
 import './App.css';
 
 const STORAGE_KEYS = {
@@ -18,6 +18,37 @@ const ChatApp = () => {
   const [activeChat, setActiveChat] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Helper functions for localStorage
+  const saveToLocalStorage = (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
+  };
+
+  const getFromLocalStorage = (key) => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : null;
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      return null;
+    }
+  };
+
+  // Load chats from API
+  const loadChats = async () => {
+    try {
+      const response = await apiService.getChats();
+      setChats(response.chats || []);
+    } catch (error) {
+      console.error('Error loading chats:', error);
+      setChats([]);
+    }
+  };
 
   // Check for mobile screen
   useEffect(() => {
@@ -33,23 +64,30 @@ const ChatApp = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Load data from localStorage on mount
+  // Initialize app and check authentication
   useEffect(() => {
-    const savedUser = getFromLocalStorage(STORAGE_KEYS.USER);
-    const savedChats = getFromLocalStorage(STORAGE_KEYS.CHATS);
-    const savedActiveChat = getFromLocalStorage(STORAGE_KEYS.ACTIVE_CHAT);
-
-    if (savedUser && savedUser.isLoggedIn) {
-      setUser(savedUser);
-      setChats(savedChats || mockChats);
-      
-      if (savedActiveChat) {
-        const foundChat = (savedChats || mockChats).find(chat => chat.id === savedActiveChat);
-        if (foundChat) {
-          setActiveChat(foundChat);
+    const initializeApp = async () => {
+      try {
+        // Check if user has a valid session
+        const authResult = await authHelpers.checkAuth();
+        
+        if (authResult.success) {
+          setUser({ ...authResult.user, isLoggedIn: true });
+          await loadChats();
+        } else {
+          // Clear any stale localStorage data
+          localStorage.removeItem(STORAGE_KEYS.USER);
+          localStorage.removeItem(STORAGE_KEYS.CHATS);
+          localStorage.removeItem(STORAGE_KEYS.ACTIVE_CHAT);
         }
+      } catch (error) {
+        console.error('Error initializing app:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
+
+    initializeApp();
   }, []);
 
   // Save data to localStorage whenever it changes
@@ -71,73 +109,187 @@ const ChatApp = () => {
     }
   }, [activeChat]);
 
-  const handleLogin = (userData) => {
+  const handleLogin = async (userData) => {
     setUser(userData);
-    setChats(mockChats);
+    await loadChats();
     if (isMobile) {
       setIsSidebarOpen(false);
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setChats([]);
-    setActiveChat(null);
-    localStorage.removeItem(STORAGE_KEYS.USER);
-    localStorage.removeItem(STORAGE_KEYS.CHATS);
-    localStorage.removeItem(STORAGE_KEYS.ACTIVE_CHAT);
+  const handleLogout = async () => {
+    try {
+      await authHelpers.logoutUser();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setChats([]);
+      setActiveChat(null);
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      localStorage.removeItem(STORAGE_KEYS.CHATS);
+      localStorage.removeItem(STORAGE_KEYS.ACTIVE_CHAT);
+    }
   };
 
-  const handleNewChat = () => {
-    const newChat = {
-      id: generateChatId(),
-      title: 'New Legal Consultation',
-      timestamp: new Date().toISOString(),
-      messages: []
-    };
+  const handleNewChat = async () => {
+    try {
+      const newChat = await apiService.createChat({
+        title: 'New Legal Consultation'
+      });
+      
+      setChats(prev => [newChat, ...prev]);
+      setActiveChat(newChat);
+      
+      if (isMobile) {
+        setIsSidebarOpen(false);
+      }
+    } catch (error) {
+      console.error('Error creating new chat:', error);
+    }
+  };
 
-    setChats(prev => [newChat, ...prev]);
-    setActiveChat(newChat);
+  const handleDeleteChat = async (chatId) => {
+    try {
+      await apiService.deleteChat(chatId);
+      
+      // Remove chat from state
+      setChats(prev => prev.filter(chat => chat.id !== chatId));
+      
+      // If the deleted chat was active, clear active chat
+      if (activeChat && activeChat.id === chatId) {
+        setActiveChat(null);
+      }
+      
+      console.log('Chat deleted successfully');
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+      alert('Failed to delete chat. Please try again.');
+    }
+  };
+
+  const handleChatSelect = async (chat) => {
+    try {
+      // Load full chat data including messages
+      const fullChat = await apiService.getChat(chat.id);
+      const messages = await apiService.getChatMessages(chat.id);
+      
+      setActiveChat({
+        ...fullChat,
+        messages: messages || []
+      });
+      
+      if (isMobile) {
+        setIsSidebarOpen(false);
+      }
+    } catch (error) {
+      console.error('Error selecting chat:', error);
+      // Fallback to basic chat data
+      setActiveChat(chat);
+      if (isMobile) {
+        setIsSidebarOpen(false);
+      }
+    }
+  };
+
+  const handleSendMessage = async (message, files = []) => {
+    let currentChat = activeChat;
     
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
-  };
-
-  const handleChatSelect = (chat) => {
-    setActiveChat(chat);
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
-  };
-
-  const handleSendMessage = (message) => {
-    if (!activeChat) return;
-
-    const updatedChat = {
-      ...activeChat,
-      messages: [...activeChat.messages, message],
-      timestamp: new Date().toISOString()
-    };
-
-    // Update the title for the first message
-    if (activeChat.messages.length === 0 && message.type === 'user') {
-      updatedChat.title = message.content.length > 40 
-        ? message.content.substring(0, 40) + '...' 
-        : message.content;
+    // Create a new chat if none exists
+    if (!currentChat) {
+      try {
+        currentChat = await apiService.createChat({
+          title: 'New Chat'
+        });
+        
+        setChats(prev => [currentChat, ...prev]);
+        setActiveChat(currentChat);
+      } catch (error) {
+        console.error('Error creating new chat:', error);
+        return;
+      }
     }
 
-    setActiveChat(updatedChat);
-    
-    // Update chats array
-    setChats(prev => prev.map(chat => 
-      chat.id === activeChat.id ? updatedChat : chat
-    ));
+    try {
+      // Upload files first if any
+      const uploadedFiles = [];
+      for (const file of files) {
+        try {
+          const uploadResult = await apiService.uploadFile(file);
+          uploadedFiles.push(uploadResult);
+        } catch (error) {
+          console.error('Error uploading file:', error);
+        }
+      }
+
+      // Send message with file references
+      const messageData = {
+        content: message.content,
+        file_name: uploadedFiles.length > 0 ? uploadedFiles[0].original_name : null,
+        file_url: uploadedFiles.length > 0 ? uploadedFiles[0].file_url : null,
+        metadata: uploadedFiles.length > 0 ? { files: uploadedFiles } : {}
+      };
+
+      const response = await apiService.sendMessage(currentChat.id, messageData);
+      
+      // Update active chat with new messages
+      if (response.user_message && response.ai_response) {
+        const updatedChat = {
+          ...currentChat,
+          messages: [
+            ...(currentChat.messages || []),
+            response.user_message,
+            response.ai_response
+          ],
+          title: response.chat_name || currentChat.title,
+          updated_at: new Date().toISOString()
+        };
+        
+        setActiveChat(updatedChat);
+        
+        // Update chat in the list
+        setChats(prev => prev.map(chat => 
+          chat.id === currentChat.id 
+            ? { ...chat, title: response.chat_name || chat.title, updated_at: new Date().toISOString() }
+            : chat
+        ));
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Add user message locally even if API fails
+      const userMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        content: message.content,
+        timestamp: new Date().toISOString(),
+        file_name: files.length > 0 ? files[0].name : undefined
+      };
+
+      const updatedChat = {
+        ...currentChat,
+        messages: [...(currentChat.messages || []), userMessage],
+      };
+
+      setActiveChat(updatedChat);
+    }
   };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  // Show loading spinner while initializing
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading IFlyChat...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user || !user.isLoggedIn) {
     return <Login onLogin={handleLogin} />;
@@ -150,6 +302,7 @@ const ChatApp = () => {
         activeChat={activeChat}
         onChatSelect={handleChatSelect}
         onNewChat={handleNewChat}
+        onDeleteChat={handleDeleteChat}
         onLogout={handleLogout}
         user={user}
         isMobile={isMobile}

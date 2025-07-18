@@ -9,6 +9,7 @@ const Sidebar = ({
   activeChat, 
   onChatSelect, 
   onNewChat, 
+  onDeleteChat,
   onLogout, 
   user, 
   isMobile = false,
@@ -205,6 +206,12 @@ const Sidebar = ({
                       variant="ghost"
                       size="sm"
                       className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 text-white/60 hover:text-white p-1 transition-all duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onDeleteChat && window.confirm('Are you sure you want to delete this chat?')) {
+                          onDeleteChat(chat.id);
+                        }
+                      }}
                       onMouseEnter={(e) => e.target.style.backgroundColor = '#fa6620'}
                       onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >

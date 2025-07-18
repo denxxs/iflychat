@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { Upload, FileText, X } from 'lucide-react';
 
-const FileUpload = ({ onFileUpload }) => {
+const FileUpload = ({ onFileUpload, onCancel }) => {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -98,6 +98,21 @@ const FileUpload = ({ onFileUpload }) => {
             <FileText className="w-4 h-4 mr-2" />
             Choose File
           </Button>
+          
+          {onCancel && (
+            <Button
+              variant="outline"
+              onClick={onCancel}
+              className="mt-2"
+              style={{
+                borderColor: '#d1d5db',
+                color: '#6b7280'
+              }}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+          )}
         </div>
       </div>
       
