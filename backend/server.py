@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException, status, UploadFile, File, Cookie, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 import os
 import logging
 from typing import List, Optional
 import uuid
 from datetime import datetime
+import json
 
 # Local imports
 from database import create_tables, test_connection, initialize_connection_pool
@@ -439,6 +441,132 @@ async def send_message(
         
     except Exception as e:
         logger.error(f"Error processing message: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to process message: {str(e)}"
+        )
+
+@app.post("/chats/{chat_id}/messages/stream")
+async def send_message_stream(
+    chat_id: str,
+    message_data: ChatMessageRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Send a message and get AI response with streaming"""
+    chat = await Chat.get_by_id(chat_id)
+    
+    if not chat or chat.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat not found"
+        )
+    
+    try:
+        # Create user message
+        user_message = await Message.create(
+            chat_id=chat_id,
+            type="user",
+            content=message_data.content,
+            file_name=message_data.file_name,
+            file_url=message_data.file_url,
+            metadata=message_data.metadata or {}
+        )
+        
+        if not user_message:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create user message"
+            )
+        
+        # Get context for AI
+        recent_messages = await Message.get_by_chat(chat_id, limit=10)
+        context_messages = []
+        for msg in recent_messages[-9:]:  # Last 9 messages (excluding the one we just created)
+            context_messages.append({
+                "role": "user" if msg.type == "user" else "assistant",
+                "content": msg.content
+            })
+        
+        # Add file content if available
+        file_content = ""
+        if message_data.file_name and message_data.file_url:
+            try:
+                files = await FileModel.get_by_user(current_user.id, limit=100)
+                for file_record in files:
+                    if file_record.file_url == message_data.file_url and file_record.extraction_text:
+                        file_content = f"\n\nFile content from {file_record.original_name}:\n{file_record.extraction_text}"
+                        break
+            except Exception as e:
+                logger.warning(f"Could not get file content: {e}")
+        
+        full_user_content = message_data.content + file_content
+        
+        async def generate_response():
+            try:
+                # Send initial user message data
+                yield f"data: {json.dumps({'type': 'user_message', 'message': user_message.to_dict()})}\n\n"
+                
+                # Create AI message placeholder
+                ai_message = await Message.create(
+                    chat_id=chat_id,
+                    type="bot",
+                    content="",  # Will be updated as we stream
+                    metadata={}
+                )
+                
+                if ai_message:
+                    yield f"data: {json.dumps({'type': 'ai_message_start', 'message_id': ai_message.id})}\n\n"
+                
+                # Stream AI response
+                full_response = ""
+                async for chunk in bedrock_service.generate_chat_response_stream(
+                    user_message=full_user_content,
+                    context_messages=context_messages,
+                    user_id=current_user.id
+                ):
+                    full_response += chunk
+                    yield f"data: {json.dumps({'type': 'content_delta', 'content': chunk})}\n\n"
+                
+                # Update the AI message with full content
+                if ai_message and full_response:
+                    await ai_message.update_content(full_response)
+                    yield f"data: {json.dumps({'type': 'ai_message_complete', 'message': ai_message.to_dict()})}\n\n"
+                
+                # Auto-generate chat name if this is the first user message
+                message_count = len(recent_messages)
+                if message_count <= 1:
+                    try:
+                        name_response = await bedrock_service.generate_chat_name(
+                            message=message_data.content,
+                            file_content=file_content if file_content else None,
+                            file_names=[message_data.file_name] if message_data.file_name else None
+                        )
+                        
+                        if name_response.get("suggested_name"):
+                            chat_name = name_response["suggested_name"]
+                            await chat.update_title(chat_name)
+                            yield f"data: {json.dumps({'type': 'chat_name', 'name': chat_name})}\n\n"
+                    except Exception as e:
+                        logger.warning(f"Failed to generate chat name: {e}")
+                
+                yield f"data: {json.dumps({'type': 'stream_complete'})}\n\n"
+                
+            except Exception as e:
+                logger.error(f"Error in streaming response: {e}")
+                yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+        
+        return StreamingResponse(
+            generate_response(),
+            media_type="text/plain",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Content-Type": "text/event-stream",
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Error processing streaming message: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process message: {str(e)}"

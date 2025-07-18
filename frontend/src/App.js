@@ -197,7 +197,11 @@ const ChatApp = () => {
     }
   };
 
-  const handleSendMessage = async (message, files = []) => {
+  const handleSendMessage = async (message, files = [], useStreaming = true) => {
+    if (useStreaming) {
+      return handleSendMessageStream(message, files);
+    }
+    
     let currentChat = activeChat;
     
     // Create a new chat if none exists
@@ -291,6 +295,171 @@ const ChatApp = () => {
       };
 
       setActiveChat(updatedChat);
+    }
+  };
+
+  const handleSendMessageStream = async (message, files = []) => {
+    let currentChat = activeChat;
+    
+    // Create a new chat if none exists
+    if (!currentChat) {
+      try {
+        currentChat = await apiService.createChat({
+          title: 'New Chat'
+        });
+        
+        setChats(prev => [currentChat, ...prev]);
+        setActiveChat(currentChat);
+      } catch (error) {
+        console.error('Error creating new chat:', error);
+        return;
+      }
+    }
+
+    // Create user message immediately and add to UI
+    const userMessage = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: message.content,
+      timestamp: new Date().toISOString(),
+      file_name: files.length > 0 ? files[0].name : undefined
+    };
+
+    // Add user message to chat immediately
+    let chatWithUserMessage = {
+      ...currentChat,
+      messages: [...(currentChat.messages || []), userMessage],
+    };
+    setActiveChat(chatWithUserMessage);
+
+    try {
+      // Upload files first if any
+      const uploadedFiles = [];
+      for (const file of files) {
+        try {
+          const uploadResult = await apiService.uploadFile(file);
+          uploadedFiles.push(uploadResult);
+        } catch (error) {
+          console.error('Error uploading file:', error);
+        }
+      }
+
+      // Send message with file references
+      const messageData = {
+        content: message.content,
+        file_name: uploadedFiles.length > 0 ? uploadedFiles[0].original_name : null,
+        file_url: uploadedFiles.length > 0 ? uploadedFiles[0].file_url : null,
+        metadata: uploadedFiles.length > 0 ? { files: uploadedFiles } : {}
+      };
+
+      let streamingMessage = null;
+      let streamingContent = '';
+
+      await apiService.sendMessageStream(currentChat.id, messageData, (data) => {
+        switch (data.type) {
+          case 'user_message':
+            // User message already added, ignore
+            break;
+            
+          case 'ai_message_start':
+            // Create streaming AI message placeholder
+            streamingMessage = {
+              id: data.message_id,
+              type: 'bot',
+              content: '',
+              timestamp: new Date().toISOString(),
+              isStreaming: true
+            };
+            
+            const chatWithStreaming = {
+              ...chatWithUserMessage,
+              messages: [...chatWithUserMessage.messages, streamingMessage],
+            };
+            setActiveChat(chatWithStreaming);
+            break;
+            
+          case 'content_delta':
+            // Update streaming content
+            if (streamingMessage) {
+              streamingContent += data.content;
+              streamingMessage.content = streamingContent;
+              
+              setActiveChat(prev => ({
+                ...prev,
+                messages: prev.messages.map(msg => 
+                  msg.id === streamingMessage.id 
+                    ? { ...msg, content: streamingContent }
+                    : msg
+                )
+              }));
+            }
+            break;
+            
+          case 'ai_message_complete':
+            // Mark message as complete
+            if (streamingMessage) {
+              setActiveChat(prev => ({
+                ...prev,
+                messages: prev.messages.map(msg => 
+                  msg.id === streamingMessage.id 
+                    ? { ...msg, isStreaming: false }
+                    : msg
+                )
+              }));
+            }
+            break;
+            
+          case 'chat_name':
+            // Update chat name
+            setActiveChat(prev => ({
+              ...prev,
+              title: data.name
+            }));
+            
+            setChats(prev => prev.map(chat => 
+              chat.id === currentChat.id 
+                ? { ...chat, title: data.name, updated_at: new Date().toISOString() }
+                : chat
+            ));
+            break;
+            
+          case 'error':
+            console.error('Streaming error:', data.error);
+            // Add error message
+            const errorMessage = {
+              id: (Date.now() + 1).toString(),
+              type: 'bot',
+              content: 'Sorry, I encountered an error while processing your message. Please try again.',
+              timestamp: new Date().toISOString(),
+            };
+
+            setActiveChat(prev => ({
+              ...prev,
+              messages: [...prev.messages, errorMessage]
+            }));
+            break;
+            
+          case 'stream_complete':
+            // Stream finished
+            break;
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error sending streaming message:', error);
+      
+      // Add error message if API fails
+      const errorMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'bot',
+        content: 'Sorry, I encountered an error while processing your message. Please try again.',
+        timestamp: new Date().toISOString(),
+      };
+
+      setActiveChat(prev => ({
+        ...prev,
+        messages: [...prev.messages, errorMessage]
+      }));
     }
   };
 

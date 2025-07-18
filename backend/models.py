@@ -272,6 +272,10 @@ class Message(BaseModel):
         rows_affected = await execute_update(query, tuple(values))
         return rows_affected > 0
     
+    async def update_content(self, content: str) -> bool:
+        """Update message content specifically"""
+        return await self.update(content=content)
+    
     async def delete(self) -> bool:
         """Delete message"""
         query = "DELETE FROM messages WHERE id = %s"

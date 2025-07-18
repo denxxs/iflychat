@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { ScrollArea } from './ui/scroll-area';
-import { Send, Menu, Paperclip, MoreVertical, Sparkles, Download, Trash2 } from 'lucide-react';
+import { Send, Menu, Paperclip, MoreVertical, Sparkles, Download, Trash2, ChevronDown } from 'lucide-react';
 import MessageBubble from './MessageBubble';
+import StreamingMessageBubble from './StreamingMessageBubble';
 import Loader from './Loader';
 import FileUpload from './FileUpload';
 import IndiflyLogo from './IndiflyLogo';
@@ -22,16 +22,105 @@ const Chat = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [useStreaming, setUseStreaming] = useState(true);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
+  const scrollAreaRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!scrollAreaRef.current) return;
+    
+    // Fast scroll animation like a rapid scroll down
+    const targetScrollTop = scrollAreaRef.current.scrollHeight - scrollAreaRef.current.clientHeight;
+    const startScrollTop = scrollAreaRef.current.scrollTop;
+    const distance = targetScrollTop - startScrollTop;
+    const duration = 300; // Fast animation
+    const startTime = performance.now();
+    
+    const animateScroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Ease-out cubic for rapid deceleration effect
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      scrollAreaRef.current.scrollTop = startScrollTop + (distance * easeOut);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+    
+    requestAnimationFrame(animateScroll);
+    setShowScrollToBottom(false);
+  };
+
+  const handleScroll = () => {
+    if (!scrollAreaRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
+    const hasMessages = activeChat?.messages?.length > 0;
+    
+    // Calculate if we're at the bottom with a small tolerance
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    const isAtBottom = distanceFromBottom <= 5; // Very small tolerance
+    
+    // Show button whenever bottom is not visible and there are messages
+    setShowScrollToBottom(!isAtBottom && hasMessages);
   };
 
   useEffect(() => {
-    scrollToBottom();
+    if (!scrollAreaRef.current) return;
+    
+    // Direct scroll handling for raw, immediate response like Gmail
+    scrollAreaRef.current.addEventListener('scroll', handleScroll);
+    
+    // Check initial scroll position
+    handleScroll();
+    
+    // Also check periodically to ensure button state is correct
+    const intervalId = setInterval(() => {
+      if (scrollAreaRef.current) {
+        handleScroll();
+      }
+    }, 500); // Check every 500ms
+    
+    return () => {
+      if (scrollAreaRef.current) {
+        scrollAreaRef.current.removeEventListener('scroll', handleScroll);
+      }
+      clearInterval(intervalId);
+    };
+  }, [activeChat?.messages?.length]);
+
+  useEffect(() => {
+    // Check scroll position when chat changes and scroll to bottom initially
+    setTimeout(() => {
+      if (scrollAreaRef.current) {
+        // Scroll to bottom when chat first loads
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        handleScroll();
+      }
+    }, 100); // Small delay to ensure DOM is updated
+  }, [activeChat?.id]);
+
+  useEffect(() => {
+    if (!scrollAreaRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
+    const wasAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+    
+    // Only auto-scroll to bottom if user was already at the bottom
+    if (wasAtBottom) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+      // After auto-scroll, ensure button is hidden
+      setTimeout(() => handleScroll(), 50);
+    } else {
+      // If user was scrolled up, check if button should be shown
+      setTimeout(() => handleScroll(), 50);
+    }
   }, [activeChat?.messages, isLoading]);
 
   useEffect(() => {
@@ -90,7 +179,7 @@ const Chat = ({
     setIsLoading(true);
 
     try {
-      await onSendMessage({ content: messageText }, []);
+      await onSendMessage({ content: messageText }, [], useStreaming);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -108,7 +197,7 @@ const Chat = ({
       // If no active chat, create a message that will trigger a new chat
       await onSendMessage({ 
         content: message.trim() || `Please analyze this document: ${file.name}` 
-      }, [file]);
+      }, [file], useStreaming);
       setMessage('');
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -227,7 +316,7 @@ const Chat = ({
   const messages = activeChat.messages || [];
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col h-full relative">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-3">
@@ -270,8 +359,19 @@ const Chat = ({
             
             {/* Dropdown Menu */}
             {showDropdown && (
-              <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[160px]">
+              <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[180px]">
                 <div className="py-1">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <label className="flex items-center space-x-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={useStreaming}
+                        onChange={(e) => setUseStreaming(e.target.checked)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700">Stream responses</span>
+                    </label>
+                  </div>
                   <button
                     onClick={handleExportToPdf}
                     className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
@@ -294,7 +394,10 @@ const Chat = ({
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4">
+      <div 
+        className="flex-1 p-4 overflow-y-auto chat-scroll" 
+        ref={scrollAreaRef}
+      >
         <div className="space-y-6 max-w-4xl mx-auto">
           {messages.length === 0 && !isLoading ? (
             /* Welcome screen for empty chat */
@@ -334,13 +437,25 @@ const Chat = ({
             </div>
           ) : (
             <>
-              {messages.map((msg) => (
-                <MessageBubble
-                  key={msg.id}
-                  message={formatMessage(msg)}
-                  isUser={msg.type === 'user'}
-                />
-              ))}
+              {messages.map((msg) => {
+                if (msg.isStreaming && msg.type === 'bot') {
+                  return (
+                    <StreamingMessageBubble
+                      key={msg.id}
+                      content={msg.content}
+                      isComplete={false}
+                    />
+                  );
+                } else {
+                  return (
+                    <MessageBubble
+                      key={msg.id}
+                      message={formatMessage(msg)}
+                      isUser={msg.type === 'user'}
+                    />
+                  );
+                }
+              })}
               
               {isLoading && (
                 <div className="flex justify-start">
@@ -354,7 +469,7 @@ const Chat = ({
           
           <div ref={messagesEndRef} />
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input Area */}
       <div className="border-t border-gray-200 bg-white p-4">
@@ -413,6 +528,25 @@ const Chat = ({
               onCancel={() => setShowFileUpload(false)}
             />
           </div>
+        </div>
+      )}
+
+      {/* Fixed Scroll to Bottom Button - positioned relative to main container */}
+      {showScrollToBottom && (
+        <div className="absolute bottom-20 right-6 z-50">
+          <Button
+            onClick={scrollToBottom}
+            size="sm"
+            className="rounded-full w-12 h-12 p-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white border border-gray-200 hover:bg-gray-50 hover:scale-105"
+            style={{ 
+              backgroundColor: '#ffffff',
+              borderColor: '#e5e7eb',
+              animation: 'fadeIn 0.3s ease-in-out'
+            }}
+            title="Scroll to bottom"
+          >
+            <ChevronDown className="h-5 w-5 text-gray-600" />
+          </Button>
         </div>
       )}
     </div>

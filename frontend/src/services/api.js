@@ -91,6 +91,52 @@ class ApiService {
     });
   }
 
+  async sendMessageStream(chatId, messageData, onData) {
+    const url = `${this.baseURL}/chats/${chatId}/messages/stream`;
+    const config = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(messageData),
+    };
+
+    try {
+      const response = await fetch(url, config);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              onData(data);
+            } catch (e) {
+              console.warn('Failed to parse SSE data:', line);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Streaming API request failed: /chats/${chatId}/messages/stream`, error);
+      throw error;
+    }
+  }
+
   async deleteChat(chatId) {
     return this.request(`/chats/${chatId}`, {
       method: 'DELETE',

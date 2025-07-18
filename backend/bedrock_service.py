@@ -229,5 +229,82 @@ class BedrockService:
             "reasoning": "Generated from message content"
         }
 
+    async def generate_chat_response_stream(
+        self, 
+        user_message: str, 
+        context_messages: List[Dict[str, str]] = None,
+        user_id: Optional[str] = None
+    ):
+        """Generate AI response with streaming for chat messages"""
+        try:
+            logger.info(f"🎯 Generating streaming AI response for user: {user_id}")
+            logger.info(f"📝 User message: {user_message[:100]}...")
+            
+            # Build the conversation context
+            system_prompt = """You are an intelligent legal assistant for Indifly Ventures. 
+            You provide professional legal guidance, contract review, compliance advice, and general legal information.
+            Always be helpful, accurate, and professional. If you're unsure about something, say so.
+            Never provide advice that could be construed as creating an attorney-client relationship unless explicitly authorized."""
+            
+            # Build conversation history
+            conversation = []
+            if context_messages:
+                for msg in context_messages[-10:]:  # Last 10 messages for context
+                    conversation.append({
+                        "role": msg.get("role", "user"),
+                        "content": msg.get("content", "")
+                    })
+            
+            # Use the user message directly
+            conversation.append({
+                "role": "user",
+                "content": user_message
+            })
+            
+            # Prepare the request body for Claude with streaming
+            body = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 4000,
+                "system": system_prompt,
+                "messages": conversation,
+                "temperature": 0.7,
+                "top_p": 0.9
+            }
+            
+            # Make the streaming request to Bedrock
+            logger.info(f"🔄 Making streaming request to Bedrock with model: {self.chat_model}")
+            response = self.bedrock_client.invoke_model_with_response_stream(
+                modelId=self.chat_model,
+                contentType='application/json',
+                accept='application/json',
+                body=json.dumps(body)
+            )
+            
+            # Stream the response
+            stream = response.get('body')
+            if stream:
+                for event in stream:
+                    chunk = event.get('chunk')
+                    if chunk:
+                        try:
+                            chunk_data = json.loads(chunk.get('bytes').decode())
+                            if chunk_data.get('type') == 'content_block_delta':
+                                delta = chunk_data.get('delta', {})
+                                if delta.get('type') == 'text_delta':
+                                    text = delta.get('text', '')
+                                    if text:
+                                        yield text
+                            elif chunk_data.get('type') == 'message_stop':
+                                # End of stream
+                                logger.info("✅ Streaming completed successfully")
+                                return
+                        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                            logger.warning(f"Failed to parse chunk: {e}")
+                            continue
+                            
+        except Exception as e:
+            logger.error(f"Error in streaming response: {e}")
+            yield f"Error: {str(e)}"
+
 # Create a singleton instance
 bedrock_service = BedrockService()
