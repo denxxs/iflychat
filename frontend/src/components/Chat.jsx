@@ -2,25 +2,29 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
-import { Send, Menu, Paperclip, MoreVertical, Sparkles } from 'lucide-react';
+import { Send, Menu, Paperclip, MoreVertical, Sparkles, Download, Trash2 } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import Loader from './Loader';
 import FileUpload from './FileUpload';
 import IndiflyLogo from './IndiflyLogo';
+import { exportChatToPdf } from '../utils/pdfExport';
 
 const Chat = ({ 
   activeChat, 
   onSendMessage, 
   onToggleSidebar, 
   onNewChat,
+  onDeleteChat,
   isMobile = false,
   sidebarOpen = true 
 }) => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -35,6 +39,47 @@ const Chat = ({
       inputRef.current.focus();
     }
   }, [activeChat]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleExportToPdf = async () => {
+    if (!activeChat || !activeChat.messages) return;
+    
+    try {
+      await exportChatToPdf(activeChat, activeChat.messages);
+      setShowDropdown(false);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      alert('Failed to export PDF. Please try again.');
+    }
+  };
+
+  const handleDeleteChat = async () => {
+    if (!activeChat) return;
+    
+    const confirmed = window.confirm(`Are you sure you want to delete "${activeChat.title}"? This action cannot be undone.`);
+    if (confirmed && onDeleteChat) {
+      try {
+        await onDeleteChat(activeChat.id);
+        setShowDropdown(false);
+      } catch (error) {
+        console.error('Error deleting chat:', error);
+        alert('Failed to delete chat. Please try again.');
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -213,9 +258,38 @@ const Chat = ({
           <Button variant="ghost" size="sm" className="p-2">
             <Sparkles className="h-4 w-4" style={{ color: '#fa6620' }} />
           </Button>
-          <Button variant="ghost" size="sm" className="p-2">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          <div className="relative" ref={dropdownRef}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="p-2"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+            
+            {/* Dropdown Menu */}
+            {showDropdown && (
+              <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[160px]">
+                <div className="py-1">
+                  <button
+                    onClick={handleExportToPdf}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Export to PDF</span>
+                  </button>
+                  <button
+                    onClick={handleDeleteChat}
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span>Delete Chat</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

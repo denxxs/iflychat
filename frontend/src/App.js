@@ -166,9 +166,10 @@ const ChatApp = () => {
       }
       
       console.log('Chat deleted successfully');
+      return true; // Indicate success
     } catch (error) {
       console.error('Error deleting chat:', error);
-      alert('Failed to delete chat. Please try again.');
+      throw error; // Let the caller handle the error
     }
   };
 
@@ -333,6 +334,7 @@ const ChatApp = () => {
         onSendMessage={handleSendMessage}
         onToggleSidebar={toggleSidebar}
         onNewChat={handleNewChat}
+        onDeleteChat={handleDeleteChat}
         isMobile={isMobile}
         sidebarOpen={isSidebarOpen}
       />
