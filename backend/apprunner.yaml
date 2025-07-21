@@ -1,0 +1,15 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    build:
+      - echo "Building Backend with Docker"
+run:
+  runtime-version: latest
+  command: uvicorn server:app --host 0.0.0.0 --port 8000
+  network:
+    port: 8000
+    env: PORT
+  env:
+    - name: PYTHONPATH
+      value: /app
