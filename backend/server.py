@@ -30,11 +30,17 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
-app = FastAPI(
-    title="IFlyChat API",
-    description="AI-powered legal assistant backend (No JWT)",
-    version="1.0.0"
-)
+app_config = {
+    "title": "Indifly Legal Chat API",
+    "description": "AI-powered legal assistant backend",
+    "version": "1.0.0"
+}
+
+if os.getenv("APP_ENV") == "production":
+    app_config["docs_url"] = None
+    app_config["redoc_url"] = None
+
+app = FastAPI(**app_config)
 
 # CORS configuration
 origins = [
