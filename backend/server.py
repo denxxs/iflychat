@@ -8,6 +8,7 @@ from typing import List, Optional
 import uuid
 from datetime import datetime
 import json
+from mangum import Mangum
 
 # Local imports
 from database import create_tables, test_connection, initialize_connection_pool
@@ -655,6 +656,8 @@ async def get_user_files(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to fetch files"
         )
+
+handler = Mangum(app)
 
 # Main entry point
 if __name__ == "__main__":
